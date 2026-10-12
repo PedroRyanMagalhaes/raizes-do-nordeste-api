@@ -1,0 +1,236 @@
+
+### 1. Cliente se cadastra com consentimento de fidelidade
+> POST /auth/registrar  ->  HTTP 201
+{
+  "id": 7,
+  "nome": "Ana Souza",
+  "email": "cliente.388cd9@email.com",
+  "perfil": "CLIENTE",
+  "unidade_id": null
+}
+
+### 2. Lista unidades
+> GET /unidades  ->  HTTP 200
+[
+  {
+    "id": 1,
+    "nome": "Raízes Recife - Casa Forte",
+    "cidade": "Recife",
+    "uf": "PE",
+    "regiao": "NORDESTE",
+    "tipo_cozinha": "COMPLETA"
+  },
+  {
+    "id": 2,
+    "nome": "Raízes São Paulo - Paulista",
+    "cidade": "São Paulo",
+    "uf": "SP",
+    "regiao": "SUDESTE",
+    "tipo_cozinha": "REDUZIDA"
+  }
+]
+
+### 3. Cardápio da unidade Recife
+> GET /unidades/1/cardapio  ->  HTTP 200
+[
+  {
+    "produto_id": 4,
+    "nome": "Suco de cajá",
+    "categoria": "BEBIDAS",
+    "preco": "8.00",
+    "variacao_regional": null,
+    "sazonal": false,
+    "estoque_disponivel": 50
+  },
+  {
+    "produto_id": 2,
+    "nome": "Cuscuz recheado",
+    "categoria": "CUSCUZ",
+    "preco": "22.00",
+    "variacao_regional": "Com queijo coalho",
+    "sazonal": false,
+    "estoque_disponivel": 50
+  },
+  {
+    "produto_id": 3,
+    "nome": "Bolo de macaxeira",
+    "categoria": "DOCES",
+    "preco": "9.50",
+    "variacao_regional": null,
+    "sazonal": false,
+    "estoque_disponivel": 50
+  },
+  {
+    "produto_id": 1,
+    "nome": "Tapioca de carne de sol",
+    "categoria": "TAPIOCAS",
+    "preco": "18.00",
+    "variacao_regional": null,
+    "sazonal": false,
+    "estoque_disponivel": 50
+  }
+]
+
+### 4. Pedido pelo APP (com Idempotency-Key)
+> POST /pedidos  ->  HTTP 201
+{
+  "id": 1,
+  "unidade_id": 1,
+  "cliente_id": 7,
+  "canal": "APP",
+  "status": "AGUARDANDO_PAGAMENTO",
+  "subtotal": "36.00",
+  "desconto": "0.00",
+  "total": "36.00",
+  "pontos_utilizados": 0,
+  "criado_em": "2026-10-12T23:42:09.767347",
+  "itens": [
+    {
+      "produto_id": 1,
+      "quantidade": 2,
+      "preco_unitario": "18.00"
+    }
+  ]
+}
+
+### 5. Reenvio da mesma requisição (rede instável) -> mesmo pedido, HTTP 200
+> POST /pedidos  ->  HTTP 200
+{
+  "id": 1,
+  "unidade_id": 1,
+  "cliente_id": 7,
+  "canal": "APP",
+  "status": "AGUARDANDO_PAGAMENTO",
+  "subtotal": "36.00",
+  "desconto": "0.00",
+  "total": "36.00",
+  "pontos_utilizados": 0,
+  "criado_em": "2026-10-12T23:42:09.767347",
+  "itens": [
+    {
+      "produto_id": 1,
+      "quantidade": 2,
+      "preco_unitario": "18.00"
+    }
+  ]
+}
+
+### 6. Solicita pagamento PIX ao gateway externo
+> POST /pagamentos/pedidos/1  ->  HTTP 202
+{
+  "id": 1,
+  "pedido_id": 1,
+  "valor": "36.00",
+  "status": "PENDENTE",
+  "metodo": "PIX",
+  "gateway_ref": "gw_9444592b54f64777"
+}
+
+### 7. Gateway confirma via webhook assinado (HMAC)
+> POST /pagamentos/webhook  ->  HTTP 200
+{
+  "status": "PROCESSADO"
+}
+
+### 8. Webhook com assinatura falsa -> 401
+> POST /pagamentos/webhook  ->  HTTP 401
+{
+  "detail": "Assinatura inválida"
+}
+
+### 9. Cozinha/atendimento: EM_PREPARO
+> PATCH /pedidos/1/status  ->  HTTP 200
+{
+  "id": 1,
+  "unidade_id": 1,
+  "cliente_id": 7,
+  "canal": "APP",
+  "status": "EM_PREPARO",
+  "subtotal": "36.00",
+  "desconto": "0.00",
+  "total": "36.00",
+  "pontos_utilizados": 0,
+  "criado_em": "2026-10-12T23:42:09.767347",
+  "itens": [
+    {
+      "produto_id": 1,
+      "quantidade": 2,
+      "preco_unitario": "18.00"
+    }
+  ]
+}
+
+### 9. Cozinha/atendimento: PRONTO
+> PATCH /pedidos/1/status  ->  HTTP 200
+{
+  "id": 1,
+  "unidade_id": 1,
+  "cliente_id": 7,
+  "canal": "APP",
+  "status": "PRONTO",
+  "subtotal": "36.00",
+  "desconto": "0.00",
+  "total": "36.00",
+  "pontos_utilizados": 0,
+  "criado_em": "2026-10-12T23:42:09.767347",
+  "itens": [
+    {
+      "produto_id": 1,
+      "quantidade": 2,
+      "preco_unitario": "18.00"
+    }
+  ]
+}
+
+### 9. Cozinha/atendimento: ENTREGUE
+> PATCH /pedidos/1/status  ->  HTTP 200
+{
+  "id": 1,
+  "unidade_id": 1,
+  "cliente_id": 7,
+  "canal": "APP",
+  "status": "ENTREGUE",
+  "subtotal": "36.00",
+  "desconto": "0.00",
+  "total": "36.00",
+  "pontos_utilizados": 0,
+  "criado_em": "2026-10-12T23:42:09.767347",
+  "itens": [
+    {
+      "produto_id": 1,
+      "quantidade": 2,
+      "preco_unitario": "18.00"
+    }
+  ]
+}
+
+### 10. Saldo de pontos do cliente
+> GET /fidelidade/saldo  ->  HTTP 200
+{
+  "saldo_pontos": 36,
+  "consentimento_fidelidade": true
+}
+
+### 11. Matriz: vendas por região
+> GET /relatorios/vendas?inicio=2026-01-01&fim=2026-12-31&agrupar_por=regiao  ->  HTTP 200
+[
+  {
+    "chave": "NORDESTE",
+    "quantidade_pedidos": 1,
+    "faturamento": "36.00"
+  }
+]
+
+### 12. Matriz: trilha de auditoria
+> GET /auditoria?limit=3  ->  HTTP 200
+[
+  {
+    "id": 1,
+    "usuario_id": null,
+    "acao": "PAGAMENTO_APROVADO",
+    "entidade": "Pagamento",
+    "entidade_id": 1,
+    "detalhes": "{\"pedido_id\": 1, \"gateway_ref\": \"gw_9444592b54f64777\", \"evento_id\": \"ec4f1d49ed4a412589bc8eee7b33c4e4\"}",
+    "criado_em": "2026-10-12T23:42:09.841614"
+  }
+]

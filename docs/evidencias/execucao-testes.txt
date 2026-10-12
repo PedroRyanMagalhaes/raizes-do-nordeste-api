@@ -1,0 +1,45 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\prmagalhaes\Desktop\extracode\Projeto_faculdade\raizes-do-nordeste-api\.venv\Scripts\python.exe
+rootdir: C:\Users\prmagalhaes\Desktop\extracode\Projeto_faculdade\raizes-do-nordeste-api
+plugins: anyio-4.15.1
+collecting ... collected 30 items
+
+tests/test_api.py::test_ct01_registro_e_login_cliente PASSED             [  3%]
+tests/test_api.py::test_ct02_login_senha_errada_retorna_401_sem_revelar_motivo PASSED [  6%]
+tests/test_api.py::test_ct03_endpoint_protegido_sem_token_retorna_401 PASSED [ 10%]
+tests/test_api.py::test_ct04_token_adulterado_retorna_401 PASSED         [ 13%]
+tests/test_api.py::test_ct05_cliente_nao_acessa_relatorio_da_matriz PASSED [ 16%]
+tests/test_api.py::test_ct06_cardapio_respeita_tipo_de_cozinha PASSED    [ 20%]
+tests/test_api.py::test_ct07_produto_sazonal_so_aparece_na_janela PASSED [ 23%]
+tests/test_api.py::test_ct08_preco_varia_por_unidade PASSED              [ 26%]
+tests/test_api.py::test_ct09_cliente_cria_pedido_pelo_app_e_estoque_e_baixado PASSED [ 30%]
+tests/test_api.py::test_ct10_pedido_com_mesma_idempotency_key_nao_duplica PASSED [ 33%]
+tests/test_api.py::test_ct11_estoque_insuficiente_retorna_409_e_nao_baixa_nada PASSED [ 36%]
+tests/test_api.py::test_ct12_produto_indisponivel_na_unidade_retorna_422 PASSED [ 40%]
+tests/test_api.py::test_ct13_canal_incompativel_com_perfil_retorna_403 PASSED [ 43%]
+tests/test_api.py::test_ct14_totem_e_balcao_registram_pedido_da_propria_unidade PASSED [ 46%]
+tests/test_api.py::test_ct15_cliente_nao_ve_pedido_de_outro_cliente PASSED [ 50%]
+tests/test_api.py::test_ct16_fluxo_completo_pagamento_aprovado_ate_entrega PASSED [ 53%]
+tests/test_api.py::test_ct17_pagamento_recusado_permite_nova_tentativa PASSED [ 56%]
+tests/test_api.py::test_ct18_gateway_fora_do_ar_retorna_503_e_retentativa_funciona PASSED [ 60%]
+tests/test_api.py::test_ct19_webhook_com_assinatura_invalida_retorna_401 PASSED [ 63%]
+tests/test_api.py::test_ct20_webhook_duplicado_nao_credita_pontos_duas_vezes PASSED [ 66%]
+tests/test_api.py::test_ct21_cozinha_nao_pode_pular_etapas PASSED        [ 70%]
+tests/test_api.py::test_ct22_cancelamento_de_pedido_pago_exige_gerente_e_gera_auditoria_e_estorno PASSED [ 73%]
+tests/test_api.py::test_ct23_desconto_manual_so_gerente_e_auditado PASSED [ 76%]
+tests/test_api.py::test_ct24_gerente_nao_ajusta_estoque_de_outra_unidade PASSED [ 80%]
+tests/test_api.py::test_ct25_sem_consentimento_nao_acumula_pontos PASSED [ 83%]
+tests/test_api.py::test_ct26_resgate_de_pontos_limitado_a_50_porcento PASSED [ 86%]
+tests/test_api.py::test_ct27_revogar_consentimento_interrompe_acumulo PASSED [ 90%]
+tests/test_api.py::test_ct28_anonimizacao_remove_dados_pessoais_e_bloqueia_login PASSED [ 93%]
+tests/test_api.py::test_ct29_relatorio_vendas_por_regiao_e_mais_vendidos PASSED [ 96%]
+tests/test_api.py::test_ct30_listagem_da_fila_da_loja_e_paginada PASSED  [100%]
+
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\prmagalhaes\Desktop\extracode\Projeto_faculdade\raizes-do-nordeste-api\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: C:\Users\prmagalhaes\Desktop\extracode\Projeto_faculdade\raizes-do-nordeste-api\docs\evidencias\relatorio-testes.xml -
+======================= 30 passed, 1 warning in 42.05s ========================

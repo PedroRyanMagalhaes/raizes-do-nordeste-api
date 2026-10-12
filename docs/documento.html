@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Projeto Multidisciplinar - Raízes do Nordeste - Back-end</title>
+<style>
+  @page { size: A4; margin: 22mm 18mm 20mm 18mm; }
+  :root { --verde:#1f5f3f; --terra:#a0522d; --cinza:#555; --borda:#c9c9c9; --fundo:#f6f3ee; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; color:#1d1d1d; background:#fff; }
+  h1 { font-size: 17pt; color: var(--verde); border-bottom: 2px solid var(--terra); padding-bottom: 4px; margin-top: 0; page-break-before: always; }
+  h2 { font-size: 13pt; color: var(--verde); margin-top: 18px; }
+  h3 { font-size: 11pt; color: var(--terra); margin: 14px 0 4px; }
+  p { text-align: justify; margin: 6px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 9pt; page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  th { background: var(--verde); color: #fff; text-align: left; padding: 5px 6px; }
+  td { border: 1px solid var(--borda); padding: 4px 6px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 8.8pt; background: #f1f1f1; padding: 0 3px; border-radius: 3px; }
+  pre { font-family: Consolas, monospace; font-size: 8pt; background: #1e1e1e; color: #e6e6e6; padding: 10px; border-radius: 4px; white-space: pre-wrap; page-break-inside: avoid; }
+  .nota { background: var(--fundo); border-left: 4px solid var(--terra); padding: 8px 12px; margin: 10px 0; font-size: 9.5pt; }
+  .fig { text-align: center; margin: 10px 0 4px; page-break-inside: avoid; }
+  .fig svg { max-width: 100% !important; max-height: 225mm; height: auto; }
+  .legenda { text-align: center; font-size: 9pt; color: var(--cinza); font-style: italic; margin-bottom: 14px; }
+  .ok { color: #1a7f37; font-weight: 600; }
+  .preencher { background: #fff3a8; padding: 0 4px; font-weight: 600; }
+  /* Capa */
+  .capa { height: 245mm; display: flex; flex-direction: column; justify-content: space-between; text-align: center; }
+  .capa .inst { font-size: 13pt; font-weight: 600; letter-spacing: .5px; }
+  .capa .titulo { font-size: 22pt; color: var(--verde); font-weight: 700; margin-top: 50mm; }
+  .capa .sub { font-size: 13pt; color: var(--terra); margin-top: 6px; }
+  .capa table { width: 75%; margin: 0 auto; font-size: 10.5pt; }
+  .capa td { border: none; border-bottom: 1px solid var(--borda); background: none !important; }
+  .capa td:first-child { font-weight: 600; width: 38%; }
+  .sumario { list-style: none; padding-left: 0; font-size: 11pt; }
+  .sumario li { padding: 3px 0; border-bottom: 1px dotted var(--borda); }
+  .sumario ul { list-style: none; padding-left: 18px; font-size: 10pt; }
+  .print-swagger { width: 100%; border: 1px solid var(--borda); }
+</style>
+</head>
+<body>
+
+<!-- ================= CAPA ================= -->
+<section class="capa">
+  <div>
+    <div class="inst">CENTRO UNIVERSITÁRIO INTERNACIONAL UNINTER<br>ESCOLA SUPERIOR POLITÉCNICA</div>
+    <div style="margin-top:6px">Curso Superior de Tecnologia em Análise e Desenvolvimento de Sistemas</div>
+    <div class="titulo">Rede “Raízes do Nordeste”</div>
+    <div class="sub">Projeto e implementação do back-end multicanal<br>Trilha escolhida: <b>BACK-END</b></div>
+  </div>
+  <table>
+    <tr><td>Disciplina</td><td>Eletiva IV – Projeto Multidisciplinar de Análise e Desenvolvimento de Sistemas</td></tr>
+    <tr><td>Aluno(a)</td><td><span class="preencher">[PREENCHER NOME]</span></td></tr>
+    <tr><td>RU</td><td><span class="preencher">[PREENCHER RU]</span></td></tr>
+    <tr><td>Polo de apoio</td><td><span class="preencher">[PREENCHER POLO]</span></td></tr>
+    <tr><td>Semestre</td><td><span class="preencher">[PREENCHER SEMESTRE]</span></td></tr>
+    <tr><td>Professor(a)</td><td><span class="preencher">[PREENCHER PROFESSOR]</span></td></tr>
+    <tr><td>Repositório</td><td><span class="mono">https://github.com/PedroRyanMagalhaes/raizes-do-nordeste-api</span></td></tr>
+  </table>
+  <div>2026</div>
+</section>
+
+<!-- ================= SUMÁRIO ================= -->
+<h1>Sumário</h1>
+<ul class="sumario">
+  <li>1. Introdução
+    <ul><li>1.1 Contexto · 1.2 Objetivos · 1.3 Usuários · 1.4 Relevância · 1.5 Escopo da trilha Back-end</li></ul></li>
+  <li>2. Análise e Requisitos
+    <ul><li>2.1 Regras de negócio · 2.2 Requisitos funcionais · 2.3 Requisitos não funcionais · 2.4 Ambiguidades e decisões</li></ul></li>
+  <li>3. Modelagem e Arquitetura
+    <ul><li>3.1 Diagrama de casos de uso · 3.2 Diagrama de classes · 3.3 DER · 3.4 Arquitetura · 3.5 Endpoints da API · 3.6 Persistência · 3.7 Segurança e LGPD · 3.8 Escalabilidade e tolerância a falhas</li></ul></li>
+  <li>4. Entrega Técnica
+    <ul><li>4.1 Repositório · 4.2 Estrutura do código · 4.3 Decisões de implementação · 4.4 Como executar</li></ul></li>
+  <li>5. Plano de Testes e Evidências
+    <ul><li>5.1 Estratégia · 5.2 Casos de teste · 5.3 Testes não funcionais e de segurança · 5.4 Evidências</li></ul></li>
+  <li>6. Conclusão</li>
+  <li>7. Referências</li>
+  <li>Anexos – A: Diagrama de sequência (pagamento) · B: Diagrama de estados do pedido · C: Diagrama de atividade (criação de pedido) · D: Diagrama de implantação</li>
+  <li>Declaração de uso de Inteligência Artificial</li>
+</ul>
+
+<!-- ================= 1. INTRODUÇÃO ================= -->
+<h1>1. Introdução</h1>
+<h2>1.1 Contexto</h2>
+<p>A <b>Raízes do Nordeste</b> nasceu como uma lanchonete familiar em Recife e hoje é uma rede em expansão, presente em capitais e cidades do interior. O cliente compra por quatro canais: <b>aplicativo</b> (pedidos antecipados, promoções e fidelidade), <b>totens de autoatendimento</b>, <b>balcão</b> e <b>retirada rápida (pick-up)</b>. Em qualquer canal, ele espera ver o cardápio da unidade, escolher o que está disponível naquele local, fazer o pedido, acompanhar o status e receber o pedido certo.</p>
+<p>As unidades não são iguais. Algumas têm cozinha completa e outras operam em formato reduzido. Há produtos sazonais, como os do período junino, e receitas com variações regionais. A matriz precisa de padronização, rastreabilidade e transparência: vendas por unidade e região, produtos mais vendidos, relatórios financeiros e auditoria de cancelamentos, descontos e ajustes. Some-se a isso um programa de fidelidade que deve respeitar a LGPD e o processamento de pagamentos feito por um serviço externo.</p>
+
+<h2>1.2 Objetivos do projeto</h2>
+<ul>
+  <li>Unificar os quatro canais em <b>uma única API</b>, com as mesmas regras de negócio para todos.</li>
+  <li>Garantir que o cardápio de cada unidade reflita <b>tipo de cozinha, sazonalidade, preço local e estoque</b>.</li>
+  <li>Integrar o pagamento externo de forma <b>segura e tolerante a falhas</b> (sem cobrança dupla, sem pedido “perdido”).</li>
+  <li>Implantar fidelidade com <b>consentimento explícito, revogável e auditável</b>, conforme a LGPD.</li>
+  <li>Dar à matriz <b>relatórios consolidados e trilha de auditoria</b> das operações sensíveis.</li>
+  <li>Projetar a solução para <b>alta disponibilidade e crescimento</b> da rede.</li>
+</ul>
+
+<h2>1.3 Principais usuários (atores)</h2>
+<table>
+  <tr><th>Ator</th><th>Descrição</th><th>Interação principal</th></tr>
+  <tr><td>Cliente</td><td>Consumidor final identificado</td><td>App e pick-up: cardápio, pedido, pagamento, acompanhamento, fidelidade, direitos LGPD</td></tr>
+  <tr><td>Totem</td><td>Conta de serviço do equipamento de autoatendimento de uma unidade</td><td>Registra pedidos anônimos da própria loja</td></tr>
+  <tr><td>Atendente</td><td>Funcionário de balcão</td><td>Registra pedidos no balcão, acompanha a fila</td></tr>
+  <tr><td>Cozinha</td><td>Equipe de preparo</td><td>Atualiza status: em preparo → pronto → entregue</td></tr>
+  <tr><td>Gerente</td><td>Responsável pela unidade</td><td>Ajusta estoque, aplica desconto e cancela pedidos pagos (com auditoria)</td></tr>
+  <tr><td>Administrador (Matriz)</td><td>Franqueadora</td><td>Relatórios consolidados e consulta da auditoria</td></tr>
+  <tr><td>Gateway de pagamento</td><td>Sistema externo</td><td>Recebe a solicitação de cobrança e devolve o resultado por webhook</td></tr>
+</table>
+
+<h2>1.4 Relevância</h2>
+<p>No horário de pico, ficar indisponível significa perder faturamento, travar a loja e desgastar a marca. Uma falha na integração de pagamento pode gerar cobrança em dobro ou um pedido pago que não chega à cozinha. Já o uso indevido de dados pessoais expõe a empresa às sanções da LGPD (art. 52), que vão até 2% do faturamento, limitadas a R$ 50 milhões por infração. Um back-end bem modelado resolve esses três riscos em um ponto central e permite que a rede abra novas unidades sem reescrever sistemas.</p>
+
+<h2>1.5 Escopo da trilha Back-end</h2>
+<p>Este trabalho segue a <b>trilha Back-end</b>. Ele entrega a análise de requisitos, a modelagem UML e o DER, a arquitetura, a especificação dos endpoints e uma <b>API funcional</b> em Python/FastAPI com <b>30 testes automatizados</b>. As interfaces (app, totem e painel) <b>não fazem parte do escopo</b>: elas consomem a API documentada em OpenAPI/Swagger. O processamento de pagamento é simulado por um <i>adapter</i> que segue o mesmo contrato de um provedor real.</p>
+
+<!-- ================= 2. ANÁLISE E REQUISITOS ================= -->
+<h1>2. Análise e Requisitos</h1>
+<h2>2.1 Regras de negócio</h2>
+<table>
+  <tr><th>ID</th><th>Regra</th><th>Origem no estudo de caso</th></tr>
+  <tr><td>RN01</td><td>Cada unidade tem cardápio próprio (preço, disponibilidade e variação regional) derivado do catálogo da franquia.</td><td>“Receitas variam conforme a região”</td></tr>
+  <tr><td>RN02</td><td>Produtos que exigem cozinha completa não são oferecidos em unidades de cozinha reduzida.</td><td>“Algumas possuem cozinha completa, outras formato reduzido”</td></tr>
+  <tr><td>RN03</td><td>Produtos sazonais só aparecem e só podem ser vendidos dentro da janela de datas definida.</td><td>“Produtos disponíveis em épocas específicas (junino)”</td></tr>
+  <tr><td>RN04</td><td>Um item só pode ser vendido se houver estoque na unidade; a baixa ocorre na criação do pedido e é devolvida no cancelamento.</td><td>“Controle de estoque local”</td></tr>
+  <tr><td>RN05</td><td>O canal define quem pode criar o pedido: App/Pick-up = cliente; Totem = conta do totem; Balcão = atendente/gerente.</td><td>Múltiplos canais</td></tr>
+  <tr><td>RN06</td><td>O preço do item é “congelado” no pedido; alterações futuras no cardápio não afetam pedidos existentes.</td><td>Rastreabilidade financeira</td></tr>
+  <tr><td>RN07</td><td>O pedido segue a máquina de estados: Aguardando pagamento → Pago → Em preparo → Pronto → Entregue (ou Cancelado / Pagamento recusado).</td><td>“Acompanhar o status”</td></tr>
+  <tr><td>RN08</td><td>O status “Pago” só é definido pela confirmação do gateway, nunca manualmente.</td><td>“O sistema apenas recebe a confirmação”</td></tr>
+  <tr><td>RN09</td><td>Cancelar pedido já pago exige perfil Gerente e dispara solicitação de estorno ao gateway.</td><td>Auditoria de operações sensíveis</td></tr>
+  <tr><td>RN10</td><td>Desconto manual: somente Gerente/Admin, antes do pagamento, com motivo obrigatório.</td><td>Auditoria de descontos</td></tr>
+  <tr><td>RN11</td><td>Cancelamentos, descontos, ajustes de estoque, resultados de pagamento e ações LGPD geram registro de auditoria.</td><td>“Auditoria de operações sensíveis”</td></tr>
+  <tr><td>RN12</td><td>Pontos de fidelidade só são acumulados com consentimento ativo para a finalidade FIDELIDADE (1 ponto por R$ 1,00 pago).</td><td>LGPD – consentimento explícito</td></tr>
+  <tr><td>RN13</td><td>Resgate: 20 pontos = R$ 1,00, limitado a 50% do subtotal do pedido.</td><td>“Descontos progressivos” (decisão de projeto)</td></tr>
+  <tr><td>RN14</td><td>Funcionários só operam a própria unidade; a matriz (Admin) acessa todas.</td><td>Gestão de franquia</td></tr>
+  <tr><td>RN15</td><td>Somente pedidos com pagamento confirmado entram nos relatórios de vendas.</td><td>Relatórios financeiros confiáveis</td></tr>
+</table>
+
+<h2>2.2 Requisitos funcionais</h2>
+<table>
+  <tr><th>ID</th><th>Requisito</th><th>Prioridade</th><th>Implementado</th></tr>
+  <tr><td>RF01</td><td>Cadastrar cliente com coleta explícita (opt-in) de consentimento para fidelidade.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF02</td><td>Autenticar usuários e emitir token de acesso com perfil e unidade.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF03</td><td>Listar unidades ativas, com filtro por região.</td><td>Média</td><td class="ok">Sim</td></tr>
+  <tr><td>RF04</td><td>Exibir o cardápio da unidade aplicando RN01–RN04.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF05</td><td>Criar pedido informando unidade, canal e itens, validando disponibilidade e estoque.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF06</td><td>Garantir que reenvios do mesmo pedido (Idempotency-Key) não criem duplicidade.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF07</td><td>Permitir ao cliente acompanhar o status dos próprios pedidos.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF08</td><td>Listar a fila de pedidos da unidade com filtro por status e paginação.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF09</td><td>Atualizar o status operacional do pedido respeitando a máquina de estados.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF10</td><td>Solicitar pagamento ao gateway externo (PIX, crédito, débito).</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF11</td><td>Receber o resultado do pagamento por webhook autenticado e atualizar o pedido.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF12</td><td>Permitir nova tentativa de pagamento após recusa.</td><td>Média</td><td class="ok">Sim</td></tr>
+  <tr><td>RF13</td><td>Cancelar pedido com motivo, devolvendo estoque e pontos e solicitando estorno quando pago.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF14</td><td>Aplicar desconto manual auditado.</td><td>Média</td><td class="ok">Sim</td></tr>
+  <tr><td>RF15</td><td>Ajustar estoque da unidade (gerente).</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF16</td><td>Acumular e resgatar pontos de fidelidade.</td><td>Média</td><td class="ok">Sim</td></tr>
+  <tr><td>RF17</td><td>Conceder e revogar consentimentos por finalidade, mantendo histórico.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF18</td><td>Permitir ao titular exportar seus dados (acesso/portabilidade).</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF19</td><td>Permitir ao titular solicitar eliminação (anonimização) da conta.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF20</td><td>Relatório de vendas por unidade e por região, em um período.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF21</td><td>Relatório de produtos mais vendidos (geral ou por unidade).</td><td>Média</td><td class="ok">Sim</td></tr>
+  <tr><td>RF22</td><td>Consultar a trilha de auditoria com filtro por ação.</td><td>Alta</td><td class="ok">Sim</td></tr>
+  <tr><td>RF23</td><td>Campanhas segmentadas por perfil/frequência (apenas com consentimento MARKETING e dados anonimizados/agregados).</td><td>Baixa</td><td>Modelado (evolução)</td></tr>
+  <tr><td>RF24</td><td>Gestão de metas e indicadores por unidade.</td><td>Baixa</td><td>Evolução futura</td></tr>
+</table>
+
+<h2>2.3 Requisitos não funcionais</h2>
+<table>
+  <tr><th>ID</th><th>Categoria</th><th>Requisito</th><th>Como é atendido</th></tr>
+  <tr><td>RNF01</td><td>Disponibilidade</td><td>99,9% no horário comercial; sem ponto único de falha.</td><td>API stateless (JWT) em múltiplas instâncias atrás de load balancer; banco com réplica; health check <code>/health</code>.</td></tr>
+  <tr><td>RNF02</td><td>Desempenho</td><td>p95 &lt; 500 ms para criação de pedido e consulta de cardápio com 300 req/s no pico.</td><td>Índices, baixa de estoque com UPDATE atômico, paginação, cache do cardápio (evolução). Validado por teste de carga planejado (JMeter).</td></tr>
+  <tr><td>RNF03</td><td>Escalabilidade</td><td>Suportar novas unidades sem mudança de código.</td><td>Unidade/cardápio são dados; escala horizontal da API; particionamento de pedidos por data (evolução).</td></tr>
+  <tr><td>RNF04</td><td>Tolerância a falhas</td><td>Falha do gateway não pode gerar cobrança dupla nem perda de pedido.</td><td>Idempotência em pedidos, pagamentos e webhooks; resposta 503 + Retry-After; pagamento persiste como PENDENTE.</td></tr>
+  <tr><td>RNF05</td><td>Consistência</td><td>Não vender mais do que o estoque, mesmo com acessos simultâneos.</td><td>UPDATE condicional (<code>quantidade &gt;= n</code>) + transação com rollback.</td></tr>
+  <tr><td>RNF06</td><td>Segurança</td><td>Autenticação forte e autorização por perfil.</td><td>JWT assinado com expiração; senhas PBKDF2-SHA256 (390 mil iterações); RBAC; mensagens genéricas de login.</td></tr>
+  <tr><td>RNF07</td><td>Segurança</td><td>Prevenir acesso a dados de terceiros (IDOR).</td><td>Verificação de dono/unidade em cada consulta; retorno 404 para recursos de outros clientes.</td></tr>
+  <tr><td>RNF08</td><td>Segurança</td><td>Webhook do gateway não pode ser forjado.</td><td>Assinatura HMAC-SHA256 do corpo, comparação em tempo constante.</td></tr>
+  <tr><td>RNF09</td><td>Privacidade (LGPD)</td><td>Consentimento explícito, revogável e comprovável; minimização e anonimização.</td><td>Tabela de consentimentos append-only; anonimização preservando dados fiscais; exportação de dados.</td></tr>
+  <tr><td>RNF10</td><td>Auditabilidade</td><td>Operações sensíveis rastreáveis (quem, quando, o quê, por quê).</td><td>Log de auditoria gravado na mesma transação da operação.</td></tr>
+  <tr><td>RNF11</td><td>Observabilidade</td><td>Rastrear requisições ponta a ponta.</td><td>Middleware com <code>X-Request-ID</code> e latência em log estruturado.</td></tr>
+  <tr><td>RNF12</td><td>Manutenibilidade</td><td>Código em camadas e testável.</td><td>Routers (HTTP) / Services (regras) / Models (persistência); 30 testes automatizados.</td></tr>
+  <tr><td>RNF13</td><td>Interoperabilidade</td><td>Contrato da API documentado para front-ends e parceiros.</td><td>OpenAPI 3.1 gerado automaticamente (Swagger em <code>/docs</code>).</td></tr>
+  <tr><td>RNF14</td><td>Portabilidade</td><td>Configuração por ambiente, sem segredos no código.</td><td>Variáveis de ambiente (12-Factor); SQLite em dev, PostgreSQL em produção.</td></tr>
+</table>
+
+<h2>2.4 Ambiguidades identificadas e decisões tomadas</h2>
+<table>
+  <tr><th>Ambiguidade</th><th>Decisão</th><th>Justificativa</th></tr>
+  <tr><td>Quando baixar o estoque: na criação ou no pagamento?</td><td>Na criação (reserva), devolvendo no cancelamento.</td><td>Evita vender o último item a dois clientes enquanto um deles paga; no pico isso é frequente.</td></tr>
+  <tr><td>Estoque de insumos ou de produtos?</td><td>Estoque por produto pronto/porção por unidade.</td><td>Atende o recorte do estudo; ficha técnica (insumos) é evolução futura.</td></tr>
+  <tr><td>Pedido no totem é de cliente identificado?</td><td>Totem cria pedido anônimo com conta de serviço da unidade.</td><td>Agilidade no autoatendimento e minimização de dados (LGPD).</td></tr>
+  <tr><td>“Considerar idade e perfil” na fidelidade conflita com privacidade.</td><td>Idade opcional; segmentação só com consentimento MARKETING e preferencialmente em dados agregados.</td><td>Princípios de finalidade e necessidade (LGPD art. 6º).</td></tr>
+  <tr><td>Excluir conta apaga pedidos?</td><td>Não: anonimiza o titular e preserva o pedido.</td><td>Obrigação legal fiscal (LGPD art. 16, I) e consistência dos relatórios.</td></tr>
+  <tr><td>Monólito ou microsserviços?</td><td>Monólito modular, pronto para extração.</td><td>Equipe pequena e domínio ainda em evolução; módulos isolados permitem extrair “Pagamentos” ou “Relatórios” depois.</td></tr>
+</table>
+
+<!-- ================= 3. MODELAGEM ================= -->
+<h1>3. Modelagem e Arquitetura</h1>
+<h2>3.1 Diagrama de casos de uso</h2>
+<div class="fig"><pre class="mermaid">
+flowchart LR
+  Cliente([👤 Cliente])
+  Totem([🖥️ Totem])
+  Atendente([👤 Atendente])
+  Cozinha([👤 Cozinha])
+  subgraph Sistema["Sistema Raízes do Nordeste (API)"]
+    direction TB
+    UC1((Consultar cardápio))
+    UC2((Realizar pedido))
+    UC6((Acumular / resgatar pontos))
+    UC3((Pagar pedido))
+    UC4((Acompanhar status))
+    UC5((Consentimento e dados LGPD))
+    UC7((Atualizar status de preparo))
+    UC8((Cancelar pedido))
+    UC9((Aplicar desconto))
+    UC10((Ajustar estoque))
+    UC11((Emitir relatórios))
+    UC12((Consultar auditoria))
+    UC13((Confirmar pagamento))
+  end
+  Gerente([👤 Gerente])
+  Admin([👤 Admin Matriz])
+  Gateway([⚙️ Gateway de Pagamento])
+  Cliente --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6
+  Totem --- UC2 & UC3
+  Atendente --- UC2 & UC7
+  Cozinha --- UC7
+  UC8 & UC9 & UC10 --- Gerente
+  UC11 & UC12 --- Admin
+  UC13 --- Gateway
+  UC2 -. include .-&gt; UC1
+  UC3 -. include .-&gt; UC13
+  UC6 -. extend .-&gt; UC2
+</pre></div>
+<div class="legenda">Figura 1 – Casos de uso (Gerente herda os casos do Atendente, inclusive cancelar pedido não pago; Admin herda os do Gerente; Cliente também cancela pedido ainda não pago)</div>
+
+<h3>Descrição do caso de uso principal – UC2 Realizar pedido</h3>
+<table>
+  <tr><td><b>Ator principal</b></td><td>Cliente (App/Pick-up), Totem ou Atendente (Balcão)</td></tr>
+  <tr><td><b>Pré-condição</b></td><td>Usuário autenticado; unidade ativa.</td></tr>
+  <tr><td><b>Fluxo principal</b></td><td>1. Ator consulta o cardápio (UC1). 2. Envia unidade, canal, itens e (opcional) pontos a usar, com cabeçalho Idempotency-Key. 3. Sistema valida perfil × canal (RN05) e unidade (RN14). 4. Valida disponibilidade (RN01–RN03). 5. Baixa estoque atomicamente (RN04). 6. Calcula subtotal com preço da unidade (RN06) e desconto por pontos (RN13). 7. Registra o pedido como AGUARDANDO_PAGAMENTO e retorna 201.</td></tr>
+  <tr><td><b>Fluxos alternativos</b></td><td>A1. Chave repetida → retorna o pedido original (200). A2. Produto indisponível → 422. A3. Estoque insuficiente → 409 e rollback de todas as baixas. A4. Canal incompatível → 403. A5. Saldo de pontos insuficiente → 422.</td></tr>
+  <tr><td><b>Pós-condição</b></td><td>Pedido criado, estoque reservado, pontos debitados (se houver).</td></tr>
+</table>
+
+<h2>3.2 Diagrama de classes</h2>
+<div class="fig"><pre class="mermaid">
+classDiagram
+  direction TB
+  class Unidade {
+    +id: int
+    +nome: str
+    +cidade: str
+    +uf: str
+    +regiao: str
+    +tipoCozinha: TipoCozinha
+    +ativa: bool
+  }
+  class Produto {
+    +id: int
+    +nome: str
+    +categoria: str
+    +precoBase: Decimal
+    +requerCozinhaCompleta: bool
+    +disponivelDe: date
+    +disponivelAte: date
+  }
+  class ItemCardapio {
+    +preco: Decimal
+    +ativo: bool
+    +variacaoRegional: str
+  }
+  class Estoque {
+    +quantidade: int
+    +atualizadoEm: datetime
+  }
+  class Usuario {
+    +id: int
+    +nome: str
+    +email: str
+    +perfil: Perfil
+    +dataNascimento: date
+    +anonimizado: bool
+  }
+  class Pedido {
+    +id: int
+    +canal: Canal
+    +status: StatusPedido
+    +subtotal: Decimal
+    +desconto: Decimal
+    +total: Decimal
+    +pontosUtilizados: int
+    +idempotencyKey: str
+    +transicionar(novo)
+    +cancelar(motivo)
+  }
+  class ItemPedido {
+    +quantidade: int
+    +precoUnitario: Decimal
+  }
+  class Pagamento {
+    +valor: Decimal
+    +status: StatusPagamento
+    +metodo: str
+    +idempotencyKey: str
+    +gatewayRef: str
+  }
+  class ContaFidelidade {
+    +saldoPontos: int
+  }
+  class TransacaoPontos {
+    +pontos: int
+    +tipo: str
+  }
+  class Consentimento {
+    +finalidade: Finalidade
+    +concedido: bool
+    +versaoTermo: str
+    +registradoEm: datetime
+  }
+  class LogAuditoria {
+    +acao: str
+    +entidade: str
+    +entidadeId: int
+    +detalhes: json
+    +criadoEm: datetime
+  }
+  class GatewayPagamento {
+    &lt;&lt;interface&gt;&gt;
+    +solicitarCobranca(valor, metodo, chave) str
+    +solicitarEstorno(ref)
+  }
+  class GatewayFake
+  Unidade "1" *-- "0..*" ItemCardapio
+  Produto "1" -- "0..*" ItemCardapio
+  Unidade "1" *-- "0..*" Estoque
+  Produto "1" -- "0..*" Estoque
+  Unidade "1" -- "0..*" Pedido
+  Usuario "0..1" -- "0..*" Pedido : cliente
+  Pedido "1" *-- "1..*" ItemPedido
+  ItemPedido "0..*" -- "1" Produto
+  Pedido "1" -- "0..*" Pagamento
+  Usuario "1" -- "0..1" ContaFidelidade
+  ContaFidelidade "1" *-- "0..*" TransacaoPontos
+  Usuario "1" -- "0..*" Consentimento
+  Usuario "0..1" -- "0..*" LogAuditoria : autor
+  GatewayPagamento &lt;|.. GatewayFake
+  Pagamento ..&gt; GatewayPagamento : usa
+</pre></div>
+<div class="legenda">Figura 2 – Diagrama de classes do domínio (enums: Perfil, Canal, StatusPedido, StatusPagamento, TipoCozinha, Finalidade)</div>
+
+<h2>3.3 Diagrama Entidade-Relacionamento (DER)</h2>
+<div class="fig"><pre class="mermaid">
+erDiagram
+  UNIDADES ||--o{ ITENS_CARDAPIO : oferece
+  PRODUTOS ||--o{ ITENS_CARDAPIO : compoe
+  UNIDADES ||--o{ ESTOQUES : controla
+  PRODUTOS ||--o{ ESTOQUES : estocado
+  UNIDADES ||--o{ USUARIOS : lota
+  UNIDADES ||--o{ PEDIDOS : recebe
+  USUARIOS |o--o{ PEDIDOS : faz
+  PEDIDOS ||--|{ ITENS_PEDIDO : contem
+  PRODUTOS ||--o{ ITENS_PEDIDO : referencia
+  PEDIDOS ||--o{ PAGAMENTOS : possui
+  USUARIOS ||--o| CONTAS_FIDELIDADE : tem
+  CONTAS_FIDELIDADE ||--o{ TRANSACOES_PONTOS : registra
+  USUARIOS ||--o{ CONSENTIMENTOS : concede
+  USUARIOS |o--o{ LOGS_AUDITORIA : gera
+  UNIDADES { int id PK  varchar nome  varchar cidade  char uf  varchar regiao "IDX"  enum tipo_cozinha  bool ativa }
+  PRODUTOS { int id PK  varchar nome  varchar categoria  numeric preco_base  bool requer_cozinha_completa  date disponivel_de  date disponivel_ate }
+  ITENS_CARDAPIO { int id PK  int unidade_id FK  int produto_id FK  numeric preco  bool ativo  varchar variacao_regional }
+  ESTOQUES { int id PK  int unidade_id FK  int produto_id FK  int quantidade  timestamptz atualizado_em }
+  USUARIOS { int id PK  varchar email UK  varchar senha_hash  enum perfil  int unidade_id FK  date data_nascimento  bool anonimizado }
+  PEDIDOS { int id PK  int unidade_id FK  int cliente_id FK  int criado_por_id FK  enum canal  enum status "IDX"  numeric subtotal  numeric desconto  numeric total  int pontos_utilizados  varchar idempotency_key UK  timestamptz criado_em "IDX" }
+  ITENS_PEDIDO { int id PK  int pedido_id FK  int produto_id FK  int quantidade  numeric preco_unitario }
+  PAGAMENTOS { int id PK  int pedido_id FK  numeric valor  enum status  varchar metodo  varchar idempotency_key UK  varchar gateway_ref UK }
+  EVENTOS_GATEWAY { int id PK  varchar evento_id UK  timestamptz recebido_em }
+  CONTAS_FIDELIDADE { int id PK  int usuario_id FK "UK"  int saldo_pontos }
+  TRANSACOES_PONTOS { int id PK  int conta_id FK  int pedido_id FK  int pontos  varchar tipo }
+  CONSENTIMENTOS { int id PK  int usuario_id FK  enum finalidade  bool concedido  varchar versao_termo  timestamptz registrado_em }
+  LOGS_AUDITORIA { int id PK  int usuario_id FK  varchar acao "IDX"  varchar entidade  int entidade_id  text detalhes  timestamptz criado_em "IDX" }
+</pre></div>
+<div class="legenda">Figura 3 – DER (PK = chave primária, FK = estrangeira, UK = única, IDX = índice)</div>
+<p>Restrições de unicidade importantes: <code>(unidade_id, produto_id)</code> em ITENS_CARDAPIO e ESTOQUES (um preço e um saldo por produto por loja); <code>idempotency_key</code> em PEDIDOS e PAGAMENTOS; <code>gateway_ref</code> em PAGAMENTOS; <code>evento_id</code> em EVENTOS_GATEWAY (deduplicação de webhooks). Valores monetários usam <code>NUMERIC(10,2)</code>, nunca ponto flutuante.</p>
+
+<h2>3.4 Arquitetura da solução</h2>
+<div class="fig"><pre class="mermaid">
+flowchart TB
+  subgraph Canais
+    APP[App mobile]
+    TOT[Totens]
+    BAL[PDV Balcão]
+    PAI[Painel Matriz / Cozinha]
+  end
+  CDN[CDN + WAF] --&gt; LB[Load Balancer / API Gateway&lt;br/&gt;TLS, rate limit]
+  APP & TOT & BAL & PAI --&gt; CDN
+  LB --&gt; API1[API Raízes&lt;br/&gt;instância 1]
+  LB --&gt; API2[API Raízes&lt;br/&gt;instância N]
+  subgraph API["Monólito modular (FastAPI)"]
+    direction LR
+    R[Routers HTTP] --&gt; S[Services&lt;br/&gt;regras de negócio] --&gt; M[Models / ORM]
+  end
+  API1 -.-&gt; API
+  API1 & API2 --&gt; PG[(PostgreSQL primário)]
+  PG -- replicação --&gt; RR[(Réplica de leitura&lt;br/&gt;relatórios)]
+  API1 & API2 --&gt; REDIS[(Redis&lt;br/&gt;cache de cardápio)]
+  API1 & API2 -- cobrança/estorno --&gt; GW[[Gateway de pagamento externo]]
+  GW -- webhook HMAC --&gt; LB
+  API1 & API2 --&gt; OBS[Logs + métricas&lt;br/&gt;X-Request-ID]
+</pre></div>
+<div class="legenda">Figura 4 – Arquitetura lógica alvo (o protótipo implementa a API, o banco e o adapter do gateway)</div>
+
+<p><b>Estilo: monólito modular em camadas.</b> A API é organizada em <i>Routers</i> (camada HTTP, validação e códigos de status), <i>Services</i> (regras de negócio, transações) e <i>Models</i> (persistência). A escolha de monólito, em vez de microsserviços desde o início, segue a recomendação de Fowler (“MonolithFirst”): o domínio ainda está sendo descoberto, a equipe é pequena e microsserviços trariam custo de rede, consistência distribuída e operação. Como cada módulo (pedidos, pagamentos, fidelidade, relatórios) tem fronteira clara, ele pode ser extraído depois, caso uma parte precise escalar de forma independente.</p>
+<p><b>Padrões de projeto aplicados:</b> <i>Adapter/Strategy</i> no gateway de pagamento (interface <code>GatewayPagamento</code>, que permite trocar de provedor sem alterar o domínio); <i>State Machine</i> no ciclo de vida do pedido; <i>Unit of Work</i> (sessão SQLAlchemy por requisição); <i>Dependency Injection</i> do FastAPI para banco, usuário autenticado e autorização; <i>Idempotent Receiver</i> para webhooks; DTOs (Pydantic) separados das entidades.</p>
+
+<h2>3.5 Principais endpoints da API</h2>
+<table>
+  <tr><th>Método</th><th>Rota</th><th>Perfil</th><th>Descrição / respostas</th></tr>
+  <tr><td>POST</td><td><code>/auth/registrar</code></td><td>Público</td><td>Cadastra cliente + consentimento. 201 / 409 e-mail duplicado / 422</td></tr>
+  <tr><td>POST</td><td><code>/auth/login</code></td><td>Público</td><td>Retorna JWT. 200 / 401</td></tr>
+  <tr><td>GET</td><td><code>/auth/me</code></td><td>Autenticado</td><td>Dados do usuário logado</td></tr>
+  <tr><td>GET</td><td><code>/unidades?regiao=</code></td><td>Público</td><td>Unidades ativas</td></tr>
+  <tr><td>GET</td><td><code>/unidades/{id}/cardapio</code></td><td>Público</td><td>Cardápio filtrado por cozinha, sazonalidade e estoque</td></tr>
+  <tr><td>PUT</td><td><code>/unidades/{id}/estoque/{produto}</code></td><td>Gerente, Admin</td><td>Ajusta estoque (auditado). 200 / 403 / 404</td></tr>
+  <tr><td>POST</td><td><code>/pedidos</code> + <code>Idempotency-Key</code></td><td>Por canal (RN05)</td><td>Cria pedido. 201 / 200 (repetido) / 403 / 409 estoque / 422</td></tr>
+  <tr><td>GET</td><td><code>/pedidos?unidade_id=&amp;status=&amp;limit=&amp;offset=</code></td><td>Funcionários</td><td>Fila da loja paginada (limit ≤ 100)</td></tr>
+  <tr><td>GET</td><td><code>/pedidos/{id}</code></td><td>Dono / unidade</td><td>Acompanhamento. 200 / 404</td></tr>
+  <tr><td>PATCH</td><td><code>/pedidos/{id}/status</code></td><td>Funcionários</td><td>EM_PREPARO, PRONTO, ENTREGUE. 200 / 409 transição inválida / 422</td></tr>
+  <tr><td>POST</td><td><code>/pedidos/{id}/cancelar</code></td><td>Cliente (não pago) / Gerente</td><td>Cancela com motivo, devolve estoque/pontos, estorno. 200 / 403 / 409</td></tr>
+  <tr><td>POST</td><td><code>/pedidos/{id}/desconto</code></td><td>Gerente, Admin</td><td>Desconto manual auditado. 200 / 403 / 409</td></tr>
+  <tr><td>POST</td><td><code>/pagamentos/pedidos/{id}</code></td><td>Dono / unidade</td><td>Solicita cobrança. 202 / 409 / 503 + Retry-After</td></tr>
+  <tr><td>POST</td><td><code>/pagamentos/webhook</code></td><td>Gateway (HMAC)</td><td>Resultado APROVADO/RECUSADO. 200 / 401 assinatura / 404</td></tr>
+  <tr><td>GET</td><td><code>/fidelidade/saldo</code></td><td>Cliente</td><td>Saldo de pontos e status do consentimento</td></tr>
+  <tr><td>POST</td><td><code>/lgpd/consentimentos</code></td><td>Cliente</td><td>Concede/revoga por finalidade (histórico)</td></tr>
+  <tr><td>GET</td><td><code>/lgpd/meus-dados</code></td><td>Cliente</td><td>Exportação dos dados do titular</td></tr>
+  <tr><td>DELETE</td><td><code>/lgpd/minha-conta</code></td><td>Cliente</td><td>Anonimização. 204</td></tr>
+  <tr><td>GET</td><td><code>/relatorios/vendas?inicio=&amp;fim=&amp;agrupar_por=</code></td><td>Admin</td><td>Faturamento por unidade ou região</td></tr>
+  <tr><td>GET</td><td><code>/relatorios/produtos-mais-vendidos</code></td><td>Admin</td><td>Ranking de produtos</td></tr>
+  <tr><td>GET</td><td><code>/auditoria?acao=&amp;limit=&amp;offset=</code></td><td>Admin</td><td>Trilha de auditoria paginada</td></tr>
+  <tr><td>GET</td><td><code>/health</code></td><td>Público</td><td>Verificação para o load balancer</td></tr>
+</table>
+<p>Exemplo de requisição/resposta de criação de pedido:</p>
+<pre>POST /pedidos
+Authorization: Bearer &lt;jwt&gt;
+Idempotency-Key: 9f1c2e7a-app-0001
+{ "unidade_id": 1, "canal": "APP", "itens": [ { "produto_id": 1, "quantidade": 2 } ], "usar_pontos": 0 }
+
+201 Created
+{ "id": 1, "unidade_id": 1, "cliente_id": 7, "canal": "APP", "status": "AGUARDANDO_PAGAMENTO",
+  "subtotal": "36.00", "desconto": "0.00", "total": "36.00", "pontos_utilizados": 0,
+  "itens": [ { "produto_id": 1, "quantidade": 2, "preco_unitario": "18.00" } ] }</pre>
+
+<h2>3.6 Tecnologias de persistência</h2>
+<p><b>PostgreSQL</b> (produção) foi escolhido por oferecer transações ACID (pedido, estoque e pagamento precisam ser consistentes), tipo <code>NUMERIC</code> exato para dinheiro, réplicas de leitura nativas e particionamento declarativo. Acesso via <b>SQLAlchemy 2.0</b>, o que permite usar <b>SQLite</b> em desenvolvimento e nos testes sem mudar código. Em produção, o esquema seria versionado com <b>Alembic</b> (migrations).</p>
+<p><b>Desempenho em alto volume:</b> índices em <code>pedidos(unidade_id, status, criado_em)</code> sustentam a fila da loja e os relatórios por período. Os filtros de data usam intervalo semiaberto (<code>&gt;= início AND &lt; fim+1</code>), o que mantém o uso do índice. Toda listagem é paginada com teto de 100 ou 200 itens. Com o crescimento da rede, a evolução prevista é: (1) particionar <code>pedidos</code> e <code>logs_auditoria</code> por mês; (2) direcionar os relatórios para a réplica de leitura ou para um data warehouse alimentado por CDC, para não competir com o transacional no pico; (3) trocar a paginação por <i>offset</i> por paginação <i>keyset</i> (cursor) na auditoria.</p>
+
+<h2>3.7 Segurança e LGPD</h2>
+<table>
+  <tr><th>Risco / requisito</th><th>Controle implementado</th></tr>
+  <tr><td>Senhas vazadas</td><td>Hash PBKDF2-SHA256 com salt e 390 mil iterações (OWASP Password Storage Cheat Sheet)</td></tr>
+  <tr><td>Enumeração de usuários</td><td>Mesma mensagem “Credenciais inválidas” para e-mail inexistente e senha errada</td></tr>
+  <tr><td>Escalonamento de privilégio</td><td>Cadastro público sempre cria perfil CLIENTE; RBAC por dependência <code>exigir_perfil</code></td></tr>
+  <tr><td>IDOR (OWASP API1)</td><td>Verificação de dono do pedido e de unidade do funcionário em toda consulta</td></tr>
+  <tr><td>Webhook forjado</td><td>HMAC-SHA256 do corpo bruto + <code>hmac.compare_digest</code></td></tr>
+  <tr><td>Injeção SQL</td><td>Consultas parametrizadas pelo ORM; nenhuma concatenação de SQL</td></tr>
+  <tr><td>Abuso de recursos (OWASP API4)</td><td>Limites de paginação, limite de itens e quantidades por pedido; rate limit no API Gateway</td></tr>
+  <tr><td>Segredos expostos</td><td>Chaves via variáveis de ambiente; <code>.env</code> no <code>.gitignore</code></td></tr>
+  <tr><td>LGPD – consentimento (art. 7º, I e 8º)</td><td>Opt-in explícito (nunca pré-marcado), por finalidade, com versão do termo e histórico imutável</td></tr>
+  <tr><td>LGPD – revogação (art. 8º §5º)</td><td>Endpoint de revogação; acúmulo de pontos cessa imediatamente</td></tr>
+  <tr><td>LGPD – acesso/portabilidade (art. 18, II e V)</td><td><code>GET /lgpd/meus-dados</code></td></tr>
+  <tr><td>LGPD – eliminação (art. 18, VI) × guarda fiscal (art. 16, I)</td><td>Anonimização: remove nome, e-mail, data de nascimento e credencial; mantém o pedido sem vínculo identificável</td></tr>
+  <tr><td>LGPD – auditoria de acesso</td><td>Exportação e anonimização registradas no log de auditoria</td></tr>
+  <tr><td>Minimização (art. 6º, III)</td><td>Pedidos de totem/balcão não exigem identificação; data de nascimento opcional</td></tr>
+</table>
+
+<h2>3.8 Escalabilidade e tolerância a falhas</h2>
+<ul>
+  <li><b>API stateless:</b> o JWT carrega identidade e perfil, sem sessão no servidor. Novas instâncias entram atrás do load balancer sem afinidade.</li>
+  <li><b>Concorrência no estoque:</b> <code>UPDATE estoques SET quantidade = quantidade - n WHERE ... AND quantidade &gt;= n</code>. A operação é atômica no banco, não precisa de lock na aplicação e o <i>rowcount</i> diz se houve sucesso. Se qualquer item falhar, a transação inteira sofre rollback.</li>
+  <li><b>Idempotência em três níveis:</b> (1) pedido por <code>Idempotency-Key</code>; (2) pagamento com uma chave por tentativa, repassada ao gateway; (3) webhook deduplicado por <code>evento_id</code> UNIQUE. Assim, retentativas de rede, de cliente ou do gateway nunca duplicam cobrança, pontos ou mudança de status.</li>
+  <li><b>Gateway indisponível:</b> o pagamento fica PENDENTE e a API responde <code>503</code> com <code>Retry-After</code>. Na evolução, um <i>circuit breaker</i> e um job de reconciliação consultam o status das transações pendentes e reenviam estornos.</li>
+  <li><b>Comunicação assíncrona:</b> o resultado do pagamento chega por webhook, então a API não fica bloqueada esperando o provedor no pico.</li>
+  <li><b>Observabilidade:</b> cada requisição recebe um <code>X-Request-ID</code> e tem a latência registrada em log, o que permite montar alertas de p95 e taxa de erro.</li>
+  <li><b>Crescimento da rede:</b> nova unidade = novos registros (unidade, cardápio, estoque, usuários), sem deploy.</li>
+</ul>
+
+<!-- ================= 4. ENTREGA TÉCNICA ================= -->
+<h1>4. Entrega Técnica</h1>
+<h2>4.1 Repositório</h2>
+<div class="nota">Código-fonte, testes, diagramas e evidências: <b>https://github.com/PedroRyanMagalhaes/raizes-do-nordeste-api</b> (repositório público).</div>
+<h2>4.2 Estrutura do código</h2>
+<pre>raizes-do-nordeste-api/
+├── app/
+│   ├── main.py            # FastAPI, lifespan, middleware de log/correlação, /health
+│   ├── config.py          # configuração por variáveis de ambiente
+│   ├── database.py        # engine, sessão por requisição
+│   ├── models.py          # 13 entidades ORM + enums
+│   ├── schemas.py         # DTOs Pydantic (entrada/saída)
+│   ├── security.py        # hash de senha, JWT, RBAC, escopo de unidade
+│   ├── seed.py            # dados de demonstração (2 unidades, 5 produtos, 6 usuários)
+│   ├── routers/           # auth, unidades, pedidos, pagamentos, fidelidade (LGPD), relatorios
+│   └── services/          # pedidos, pagamentos, fidelidade, auditoria
+├── tests/                 # conftest.py + test_api.py (CT-01 a CT-30)
+├── scripts/demo_fluxo.py  # jornada completa via HTTP contra o servidor
+├── docs/                  # este documento e evidências
+├── requirements.txt
+└── README.md</pre>
+<h2>4.3 Decisões de implementação</h2>
+<table>
+  <tr><th>Decisão</th><th>Alternativa descartada</th><th>Motivo</th></tr>
+  <tr><td>Python + FastAPI</td><td>Java/Spring Boot, Node/Express</td><td>Validação e OpenAPI automáticos, tipagem, produtividade; desempenho ASGI adequado ao volume</td></tr>
+  <tr><td>Regras em <i>services</i>, não nos routers</td><td>Lógica no controller</td><td>Testabilidade e reuso (ex.: futuro consumidor de fila usando a mesma regra)</td></tr>
+  <tr><td>Decimal para dinheiro</td><td>float</td><td>float gera erro de arredondamento (0,1 + 0,2 ≠ 0,3)</td></tr>
+  <tr><td>Auditoria na mesma transação</td><td>Log assíncrono</td><td>Garante que não existe operação sensível sem registro, nem registro de operação desfeita</td></tr>
+  <tr><td>Consentimento append-only</td><td>Campo booleano no usuário</td><td>A LGPD exige comprovar quando e qual termo foi aceito ou revogado</td></tr>
+  <tr><td>404 para pedido de outro cliente</td><td>403</td><td>Não revela a existência do recurso (defesa contra enumeração)</td></tr>
+  <tr><td>Gateway por interface (Adapter)</td><td>Chamada direta ao SDK do provedor</td><td>Troca de provedor sem mexer no domínio; testes sem dependência externa</td></tr>
+</table>
+<h2>4.4 Como executar</h2>
+<pre>python -m venv .venv &amp;&amp; .venv\Scripts\activate
+pip install -r requirements.txt
+python -m app.seed                 # banco com dados de demonstração
+uvicorn app.main:app --reload      # Swagger em http://localhost:8000/docs
+pytest -v                          # 30 testes automatizados
+python scripts/demo_fluxo.py http://localhost:8000   # jornada completa</pre>
+<p>Usuários de demonstração (senha <code>Senha@123</code>): admin@raizes.com, gerente.recife@raizes.com, atendente.recife@raizes.com, cozinha.recife@raizes.com, totem01.recife@raizes.com, gerente.sp@raizes.com.</p>
+<div class="fig"><img class="print-swagger" src="evidencias/swagger-endpoints.png" alt="Swagger da API"></div>
+<div class="legenda">Figura 5 – Documentação OpenAPI/Swagger gerada pela API em execução</div>
+
+<!-- ================= 5. TESTES ================= -->
+<h1>5. Plano de Testes e Evidências</h1>
+<h2>5.1 Estratégia de validação</h2>
+<p>A estratégia segue a pirâmide de testes, com prioridade definida por risco. Os riscos mais caros neste negócio são: cobrança duplicada, venda sem estoque, vazamento de dados pessoais e indisponibilidade no pico.</p>
+<table>
+  <tr><th>Nível / tipo</th><th>Objetivo</th><th>Ferramenta</th><th>Situação</th></tr>
+  <tr><td>Integração da API (funcionais)</td><td>Validar regras RN01–RN15 ponta a ponta (HTTP → banco)</td><td>pytest + FastAPI TestClient, SQLite em memória isolado por teste</td><td class="ok">30 casos executados – 100% aprovados</td></tr>
+  <tr><td>Integração com serviço externo</td><td>Aprovação, recusa, indisponibilidade, webhook duplicado e forjado</td><td>pytest + GatewayFake (simula o contrato do provedor)</td><td class="ok">Executado (CT-16 a CT-20)</td></tr>
+  <tr><td>Segurança e privacidade</td><td>Autenticação, autorização, IDOR, HMAC, LGPD</td><td>pytest (executado); OWASP ZAP baseline/API scan (planejado)</td><td class="ok">Executado (CT-02 a CT-05, CT-15, CT-19, CT-25 a CT-28)</td></tr>
+  <tr><td>Ponta a ponta (E2E)</td><td>Jornada completa contra o servidor real</td><td>scripts/demo_fluxo.py (httpx) / coleção Postman</td><td class="ok">Executado (seção 5.4)</td></tr>
+  <tr><td>Desempenho / carga</td><td>Validar RNF02 no pico</td><td>Apache JMeter ou k6</td><td>Planejado (5.3)</td></tr>
+  <tr><td>Disponibilidade / resiliência</td><td>Queda de instância e do gateway</td><td>Testes de caos em homologação</td><td>Planejado (5.3)</td></tr>
+</table>
+
+<h2>5.2 Casos de teste (critérios de aceitação)</h2>
+<p>Legenda: <b>(+)</b> caso positivo, <b>(−)</b> caso negativo/erro. Cada caso corresponde a uma função <code>test_ctXX_...</code> em <code>tests/test_api.py</code>.</p>
+<table>
+  <tr><th>ID</th><th>Cenário</th><th>Entrada / passos</th><th>Saída esperada</th><th>Req.</th><th>Result.</th></tr>
+  <tr><td>CT01 (+)</td><td>Registro e login de cliente</td><td>POST /auth/registrar; POST /auth/login; GET /auth/me</td><td>201; token; perfil CLIENTE</td><td>RF01-02</td><td class="ok">OK</td></tr>
+  <tr><td>CT02 (−)</td><td>Login com senha errada</td><td>Senha inválida</td><td>401 “Credenciais inválidas” (sem revelar motivo)</td><td>RNF06</td><td class="ok">OK</td></tr>
+  <tr><td>CT03 (−)</td><td>Rota protegida sem token</td><td>GET /pedidos/1 sem Authorization</td><td>401</td><td>RNF06</td><td class="ok">OK</td></tr>
+  <tr><td>CT04 (−)</td><td>Token adulterado</td><td>JWT com assinatura falsa</td><td>401</td><td>RNF06</td><td class="ok">OK</td></tr>
+  <tr><td>CT05 (−)</td><td>Cliente acessa relatório da matriz</td><td>GET /relatorios/vendas como cliente</td><td>403</td><td>RN14</td><td class="ok">OK</td></tr>
+  <tr><td>CT06 (+/−)</td><td>Cardápio respeita cozinha</td><td>Cardápio Recife (completa) × SP (reduzida)</td><td>Cuscuz só em Recife</td><td>RN02</td><td class="ok">OK</td></tr>
+  <tr><td>CT07 (+/−)</td><td>Produto sazonal</td><td>Cardápio em 20/06 e 20/10</td><td>Canjica só em junho</td><td>RN03</td><td class="ok">OK</td></tr>
+  <tr><td>CT08 (+)</td><td>Preço por unidade</td><td>Tapioca Recife × SP</td><td>18,00 × 21,00</td><td>RN01</td><td class="ok">OK</td></tr>
+  <tr><td>CT09 (+)</td><td>Pedido pelo app</td><td>2 tapiocas + 1 suco</td><td>201; total 44,00; estoque 50→48</td><td>RF05, RN04</td><td class="ok">OK</td></tr>
+  <tr><td>CT10 (+)</td><td>Reenvio com mesma Idempotency-Key</td><td>2 POST iguais</td><td>201 e 200, mesmo id, 1 pedido no banco</td><td>RF06</td><td class="ok">OK</td></tr>
+  <tr><td>CT11 (−)</td><td>Estoque insuficiente</td><td>Estoque bolo = 3; pede suco + 5 bolos</td><td>409; suco NÃO baixado (rollback)</td><td>RNF05</td><td class="ok">OK</td></tr>
+  <tr><td>CT12 (−)</td><td>Produto indisponível na unidade</td><td>Cuscuz em SP</td><td>422</td><td>RN02</td><td class="ok">OK</td></tr>
+  <tr><td>CT13 (−)</td><td>Canal incompatível</td><td>Cliente usa canal BALCAO</td><td>403</td><td>RN05</td><td class="ok">OK</td></tr>
+  <tr><td>CT14 (+/−)</td><td>Totem e balcão</td><td>Totem/atendente Recife em Recife; atendente Recife em SP</td><td>201, 201, 403</td><td>RN05, RN14</td><td class="ok">OK</td></tr>
+  <tr><td>CT15 (−)</td><td>Cliente vê pedido de outro (IDOR)</td><td>Cliente B consulta pedido de A</td><td>404</td><td>RNF07</td><td class="ok">OK</td></tr>
+  <tr><td>CT16 (+)</td><td>Fluxo completo até entrega</td><td>Pedido → pagamento → webhook APROVADO → preparo → pronto → entregue</td><td>Status final ENTREGUE</td><td>RF07-11</td><td class="ok">OK</td></tr>
+  <tr><td>CT17 (+/−)</td><td>Pagamento recusado e nova tentativa</td><td>Webhook RECUSADO; nova solicitação; APROVADO</td><td>PAGAMENTO_RECUSADO → nova ref → PAGO</td><td>RF12</td><td class="ok">OK</td></tr>
+  <tr><td>CT18 (−/+)</td><td>Gateway fora do ar</td><td>Gateway falha; depois volta</td><td>503 + Retry-After; retentativa 202; 1 única cobrança</td><td>RNF04</td><td class="ok">OK</td></tr>
+  <tr><td>CT19 (−)</td><td>Webhook forjado</td><td>Assinatura inválida</td><td>401</td><td>RNF08</td><td class="ok">OK</td></tr>
+  <tr><td>CT20 (−)</td><td>Webhook duplicado</td><td>Mesmo evento_id 2×</td><td>“DUPLICADO”; pontos creditados 1× (22)</td><td>RNF04</td><td class="ok">OK</td></tr>
+  <tr><td>CT21 (−)</td><td>Pular etapas</td><td>EM_PREPARO sem pagamento; PAGO manual</td><td>409; 422</td><td>RN07-08</td><td class="ok">OK</td></tr>
+  <tr><td>CT22 (+/−)</td><td>Cancelar pedido pago</td><td>Atendente tenta; gerente cancela</td><td>403; 200 + estorno + auditoria + estoque devolvido</td><td>RN09, RN11</td><td class="ok">OK</td></tr>
+  <tr><td>CT23 (+/−)</td><td>Desconto manual</td><td>Atendente; gerente R$ 3,00</td><td>403; total 15,00 + auditoria</td><td>RN10</td><td class="ok">OK</td></tr>
+  <tr><td>CT24 (+/−)</td><td>Estoque de outra unidade</td><td>Gerente SP ajusta Recife e SP</td><td>403; 200</td><td>RN14</td><td class="ok">OK</td></tr>
+  <tr><td>CT25 (−)</td><td>Sem consentimento não acumula</td><td>Cliente sem opt-in compra</td><td>Saldo 0</td><td>RN12</td><td class="ok">OK</td></tr>
+  <tr><td>CT26 (+)</td><td>Resgate com teto de 50%</td><td>220 pontos em pedido de 8,00</td><td>Desconto 4,00; 80 pontos usados; saldo 140</td><td>RN13</td><td class="ok">OK</td></tr>
+  <tr><td>CT27 (−)</td><td>Revogação de consentimento</td><td>Revoga e compra</td><td>Saldo 0</td><td>RF17</td><td class="ok">OK</td></tr>
+  <tr><td>CT28 (+)</td><td>Exportação e anonimização LGPD</td><td>GET meus-dados; DELETE minha-conta; login</td><td>Dados exportados; 204; login 401; pedido preservado</td><td>RF18-19</td><td class="ok">OK</td></tr>
+  <tr><td>CT29 (+)</td><td>Relatórios da matriz</td><td>2 pedidos pagos + 1 não pago</td><td>NORDESTE 54,00; SUDESTE 11,00; top = tapioca (3)</td><td>RF20-21, RN15</td><td class="ok">OK</td></tr>
+  <tr><td>CT30 (+/−)</td><td>Fila paginada</td><td>5 pedidos; limit=2; limit=500</td><td>total 5, 2 itens; 422</td><td>RF08</td><td class="ok">OK</td></tr>
+</table>
+
+<h2>5.3 Testes não funcionais e de segurança (planejados)</h2>
+<div class="nota">Os testes abaixo exigem um ambiente de homologação próximo do de produção (PostgreSQL, várias instâncias, rede real). Por isso estão <b>planejados com critérios de aceitação</b> e não foram executados no protótipo local.</div>
+<table>
+  <tr><th>ID</th><th>Tipo</th><th>Cenário</th><th>Critério de aceitação</th><th>Ferramenta</th></tr>
+  <tr><td>NF01</td><td>Carga (pico do café da manhã)</td><td>Rampa até 300 req/s por 15 min: 60% cardápio, 30% criação de pedido, 10% consulta de status</td><td>p95 &lt; 500 ms; erro &lt; 0,5%</td><td>JMeter / k6</td></tr>
+  <tr><td>NF02</td><td>Concorrência de estoque</td><td>200 usuários simultâneos comprando o último lote de 50 itens</td><td>Exatamente 50 vendidos; nenhum estoque negativo</td><td>JMeter</td></tr>
+  <tr><td>NF03</td><td>Estresse</td><td>Aumentar a carga até degradar</td><td>Ponto de ruptura documentado; recuperação sem intervenção manual</td><td>k6</td></tr>
+  <tr><td>NF04</td><td>Resiliência</td><td>Derrubar 1 de 3 instâncias durante a carga</td><td>Sem indisponibilidade percebida (erro &lt; 1% por até 30 s)</td><td>Chaos test</td></tr>
+  <tr><td>NF05</td><td>Resiliência do gateway</td><td>Gateway com latência de 10 s ou fora do ar</td><td>Criação de pedido não afetada; 503 rápido no pagamento; nenhuma cobrança duplicada</td><td>Mock com toxiproxy</td></tr>
+  <tr><td>SEG01</td><td>Varredura DAST</td><td>OWASP ZAP API scan a partir do <code>/openapi.json</code></td><td>Nenhum alerta High/Medium aberto</td><td>OWASP ZAP</td></tr>
+  <tr><td>SEG02</td><td>Força bruta</td><td>100 tentativas de login/min no mesmo usuário</td><td>Rate limit (429) e alerta</td><td>API Gateway + JMeter</td></tr>
+  <tr><td>SEG03</td><td>Dependências</td><td>Auditoria de bibliotecas vulneráveis</td><td>Nenhuma CVE crítica</td><td>pip-audit / Dependabot</td></tr>
+  <tr><td>LGPD01</td><td>Privacidade</td><td>Revisar se logs e relatórios contêm dados pessoais</td><td>Nenhum e-mail/nome em logs de aplicação</td><td>Revisão + grep nos logs</td></tr>
+</table>
+
+<h2>5.4 Evidências de execução</h2>
+<h3>a) Execução da suíte automatizada (pytest)</h3>
+<pre>
+@@PYTEST@@
+</pre>
+<p>Relatório JUnit XML: <code>docs/evidencias/relatorio-testes.xml</code>. Saída completa: <code>docs/evidencias/execucao-testes.txt</code>.</p>
+<h3>b) Jornada real via HTTP contra o servidor (uvicorn)</h3>
+<pre>
+@@FLUXO@@
+</pre>
+<p>Saída completa (com os corpos JSON): <code>docs/evidencias/fluxo-http.txt</code>.</p>
+
+<!-- ================= 6. CONCLUSÃO ================= -->
+<h1>6. Conclusão</h1>
+<p>O projeto mostrou que, no caso da Raízes do Nordeste, a dificuldade não está em “fazer um CRUD de pedidos”, mas nas <b>regras que ficam entre as linhas</b> do estudo de caso. Um mesmo pedido pode chegar por quatro canais com permissões diferentes. O cardápio muda por loja, por estação e por estrutura de cozinha. O pagamento é assíncrono e pode falhar de várias formas. A fidelidade precisa equilibrar o interesse comercial com a LGPD.</p>
+<h3>Principais lições aprendidas</h3>
+<ul>
+  <li><b>Idempotência é requisito de negócio, não detalhe técnico.</b> Rede instável no app, totem que reenvia e gateway que repete webhook são situações normais. Sem chaves de idempotência, cada uma delas vira cobrança dupla ou pontos duplicados.</li>
+  <li><b>Consistência no banco é mais segura que na aplicação.</b> O UPDATE condicional de estoque resolve a concorrência sem locks e sem condição de corrida.</li>
+  <li><b>LGPD influencia o modelo de dados.</b> Consentimento com histórico e anonimização em vez de exclusão são decisões de modelagem, não só jurídicas.</li>
+  <li><b>Testes negativos valem tanto quanto os positivos.</b> Metade dos 30 casos verifica o que o sistema deve <i>recusar</i>.</li>
+</ul>
+<h3>Desafios</h3>
+<p>Interpretar ambiguidades (quando reservar o estoque, como tratar totem anônimo, como conciliar “idade e perfil” com privacidade) e documentar cada decisão com justificativa. Também foi um desafio manter a máquina de estados coerente entre cancelamento, estorno e devolução de estoque e pontos.</p>
+<h3>Pontos de atenção e evoluções futuras</h3>
+<ul>
+  <li>Executar os testes de carga e segurança planejados (seção 5.3) em homologação.</li>
+  <li>Circuit breaker e job de reconciliação de pagamentos e estornos pendentes.</li>
+  <li>Cache do cardápio (Redis) com invalidação no ajuste de estoque.</li>
+  <li>Eventos de domínio (ex.: “PedidoPago”) em fila (RabbitMQ/Kafka) para notificações em tempo real à cozinha e ao cliente (WebSocket/push).</li>
+  <li>Ficha técnica (estoque de insumos), metas e indicadores por unidade.</li>
+  <li>Campanhas segmentadas sobre dados agregados/anonimizados e com consentimento MARKETING.</li>
+  <li>Data warehouse alimentado por CDC para os relatórios da matriz; particionamento de pedidos e auditoria por mês.</li>
+  <li>Pipeline de CI/CD (GitHub Actions) com testes, lint, pip-audit e deploy em containers.</li>
+</ul>
+<p>Respondendo à pergunta do estudo de caso (“a solução se sustentaria em uma entrevista técnica?”): cada decisão aqui tem uma alternativa considerada, uma justificativa ligada ao negócio e um teste automatizado que a comprova. Esse é o critério usado para considerar a solução sustentável.</p>
+
+<!-- ================= 7. REFERÊNCIAS ================= -->
+<h1>7. Referências</h1>
+<p>BRASIL. <b>Lei nº 13.709, de 14 de agosto de 2018</b>. Lei Geral de Proteção de Dados Pessoais (LGPD). Brasília, DF, 2018. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm.</p>
+<p>FOWLER, M. <b>UML Essencial</b>: um breve guia para linguagem padrão. 3. ed. Porto Alegre: Bookman, 2005.</p>
+<p>FOWLER, M. <b>MonolithFirst</b>. 2015. Disponível em: https://martinfowler.com/bliki/MonolithFirst.html.</p>
+<p>GAMMA, E.; HELM, R.; JOHNSON, R.; VLISSIDES, J. <b>Padrões de projetos</b>: soluções reutilizáveis de software orientado a objetos. Porto Alegre: Bookman, 2000.</p>
+<p>LARMAN, C. <b>Utilizando UML e padrões</b>. 3. ed. Porto Alegre: Bookman, 2007.</p>
+<p>LEDUR, C. L. <b>Análise e projeto de sistemas</b>. Barueri: Manole, 2017.</p>
+<p>OWASP FOUNDATION. <b>OWASP API Security Top 10 – 2023</b>. Disponível em: https://owasp.org/API-Security/.</p>
+<p>OWASP FOUNDATION. <b>Password Storage Cheat Sheet</b>. Disponível em: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html.</p>
+<p>PRESSMAN, R. S.; MAXIM, B. R. <b>Engenharia de Software</b>: uma abordagem profissional. 9. ed. Porto Alegre: AMGH, 2021.</p>
+<p>SOMMERVILLE, I. <b>Engenharia de Software</b>. 10. ed. São Paulo: Pearson, 2018.</p>
+<p>STRIPE. <b>Idempotent requests</b>. Disponível em: https://docs.stripe.com/api/idempotent_requests.</p>
+<p>FASTAPI. <b>FastAPI documentation</b>. Disponível em: https://fastapi.tiangolo.com/.</p>
+<p>SQLALCHEMY. <b>SQLAlchemy 2.0 documentation</b>. Disponível em: https://docs.sqlalchemy.org/en/20/.</p>
+<p>WIGGINS, A. <b>The Twelve-Factor App</b>. Disponível em: https://12factor.net/.</p>
+
+<!-- ================= ANEXOS ================= -->
+<h1>Anexos – Modelos UML complementares</h1>
+<h2>Anexo A – Diagrama de sequência: pagamento com gateway externo</h2>
+<div class="fig"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor C as Cliente (App)
+  participant API as API Raízes
+  participant DB as Banco
+  participant GW as Gateway externo
+  C-&gt;&gt;API: POST /pedidos (Idempotency-Key)
+  API-&gt;&gt;DB: valida cardápio + UPDATE estoque condicional
+  API--&gt;&gt;C: 201 AGUARDANDO_PAGAMENTO
+  C-&gt;&gt;API: POST /pagamentos/pedidos/{id} (PIX)
+  API-&gt;&gt;DB: cria Pagamento PENDENTE (chave pedido-N-tentativa-1)
+  API-&gt;&gt;GW: solicitarCobranca(valor, chave)
+  alt gateway disponível
+    GW--&gt;&gt;API: gateway_ref
+    API--&gt;&gt;C: 202 Accepted (gateway_ref)
+  else timeout / erro
+    API-&gt;&gt;DB: mantém PENDENTE
+    API--&gt;&gt;C: 503 + Retry-After (repetir usa a mesma chave)
+  end
+  GW-&gt;&gt;API: POST /pagamentos/webhook (X-Signature HMAC)
+  API-&gt;&gt;API: valida assinatura
+  API-&gt;&gt;DB: INSERT evento_id (UNIQUE) — duplicado? retorna "DUPLICADO"
+  alt APROVADO
+    API-&gt;&gt;DB: Pagamento APROVADO, Pedido PAGO, credita pontos (se consentido), auditoria
+  else RECUSADO
+    API-&gt;&gt;DB: Pagamento RECUSADO, Pedido PAGAMENTO_RECUSADO, auditoria
+  end
+  API--&gt;&gt;GW: 200
+  C-&gt;&gt;API: GET /pedidos/{id}
+  API--&gt;&gt;C: status atualizado
+</pre></div>
+<div class="legenda">Figura A – Sequência de pagamento com tratamento de falhas</div>
+
+<h2>Anexo B – Diagrama de estados do pedido</h2>
+<div class="fig"><pre class="mermaid">
+stateDiagram-v2
+  [*] --&gt; AGUARDANDO_PAGAMENTO : pedido criado (estoque reservado)
+  AGUARDANDO_PAGAMENTO --&gt; PAGO : webhook APROVADO
+  AGUARDANDO_PAGAMENTO --&gt; PAGAMENTO_RECUSADO : webhook RECUSADO
+  AGUARDANDO_PAGAMENTO --&gt; CANCELADO : cliente/atendente cancela
+  PAGAMENTO_RECUSADO --&gt; AGUARDANDO_PAGAMENTO : nova tentativa
+  PAGAMENTO_RECUSADO --&gt; CANCELADO : desistência
+  PAGO --&gt; EM_PREPARO : cozinha inicia
+  PAGO --&gt; CANCELADO : gerente cancela (estorno)
+  EM_PREPARO --&gt; PRONTO
+  PRONTO --&gt; ENTREGUE
+  ENTREGUE --&gt; [*]
+  CANCELADO --&gt; [*] : estoque e pontos devolvidos
+</pre></div>
+<div class="legenda">Figura B – Máquina de estados (transições fora do diagrama retornam HTTP 409)</div>
+
+<h2>Anexo C – Diagrama de atividade: criação de pedido</h2>
+<div class="fig"><pre class="mermaid">
+flowchart TD
+  A([Início]) --&gt; B{Idempotency-Key&lt;br/&gt;já usada?}
+  B -- sim --&gt; B1[Retorna pedido original 200] --&gt; Z([Fim])
+  B -- não --&gt; C{Perfil pode usar&lt;br/&gt;o canal?}
+  C -- não --&gt; C1[403] --&gt; Z
+  C -- sim --&gt; D{Unidade ativa e&lt;br/&gt;do funcionário?}
+  D -- não --&gt; D1[403/404] --&gt; Z
+  D -- sim --&gt; E[Para cada item]
+  E --&gt; F{Disponível na unidade?&lt;br/&gt;cozinha + sazonalidade}
+  F -- não --&gt; F1[Rollback + 422] --&gt; Z
+  F -- sim --&gt; G{UPDATE estoque&lt;br/&gt;quantidade &gt;= n?}
+  G -- não --&gt; G1[Rollback + 409] --&gt; Z
+  G -- sim --&gt; H{Mais itens?}
+  H -- sim --&gt; E
+  H -- não --&gt; I{Usar pontos?}
+  I -- sim --&gt; J[Valida saldo, aplica teto 50%,&lt;br/&gt;debita pontos]
+  I -- não --&gt; K
+  J --&gt; K[Calcula total e grava&lt;br/&gt;AGUARDANDO_PAGAMENTO]
+  K --&gt; L[Commit + 201] --&gt; Z
+</pre></div>
+<div class="legenda">Figura C – Atividade de criação de pedido</div>
+
+<h2>Anexo D – Diagrama de implantação (alvo de produção)</h2>
+<div class="fig"><pre class="mermaid">
+flowchart LR
+  subgraph Loja["Unidade (loja)"]
+    T[Totem&lt;br/&gt;navegador kiosk]
+    P[PDV Balcão]
+    K[Tela da cozinha]
+  end
+  M[Smartphone&lt;br/&gt;App cliente]
+  subgraph Nuvem["Nuvem (2 zonas de disponibilidade)"]
+    WAF[CDN + WAF] --&gt; ALB[Load Balancer]
+    subgraph Cluster["Cluster de containers (autoscaling)"]
+      C1[api:1.0 #1]
+      C2[api:1.0 #2]
+      C3[api:1.0 #N]
+    end
+    ALB --&gt; C1 & C2 & C3
+    C1 & C2 & C3 --&gt; PGM[(PostgreSQL primário)]
+    PGM --&gt; PGR[(Réplica / standby)]
+    C1 & C2 & C3 --&gt; RD[(Redis)]
+  end
+  T & P & K & M -- HTTPS --&gt; WAF
+  C1 & C2 & C3 -- HTTPS --&gt; GW[[Provedor de pagamento]]
+  GW -- webhook HTTPS --&gt; WAF
+</pre></div>
+<div class="legenda">Figura D – Implantação com redundância em duas zonas</div>
+
+<!-- ================= DECLARAÇÃO IA ================= -->
+<h1>Declaração de uso de Inteligência Artificial</h1>
+<p class="preencher">[PREENCHER PELO ALUNO – ferramenta utilizada, prompts e trechos aproveitados, conforme exigido nas orientações da atividade.]</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "strict",
+                       flowchart: { htmlLabels: true, useMaxWidth: true }, er: { useMaxWidth: true },
+                       sequence: { useMaxWidth: true }, class: { useMaxWidth: true } });
+  mermaid.run({ querySelector: ".mermaid" })
+    .then(() => { window.__diagramasProntos = true; })
+    .catch((e) => { console.error(e); window.__diagramasErro = String(e); });
+</script>
+</body>
+</html>
