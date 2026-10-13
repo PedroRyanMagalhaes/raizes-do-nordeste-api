@@ -1,4 +1,3 @@
-"""Ponto de entrada da API Raízes do Nordeste."""
 import logging
 import time
 import uuid
@@ -15,7 +14,7 @@ log = logging.getLogger("raizes")
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Em produção as tabelas seriam versionadas com Alembic (migrations).
+    # TODO: trocar por migrations (Alembic)
     Base.metadata.create_all(engine)
     yield
 
@@ -33,7 +32,6 @@ for r in (auth.router, unidades.router, pedidos.router, pagamentos.router, fidel
 
 @app.middleware("http")
 async def correlacao_e_tempo(request: Request, call_next):
-    """Log estruturado com ID de correlação e latência: base para observabilidade."""
     request_id = request.headers.get("X-Request-ID", uuid.uuid4().hex)
     inicio = time.perf_counter()
     resposta = await call_next(request)
@@ -45,5 +43,4 @@ async def correlacao_e_tempo(request: Request, call_next):
 
 @app.get("/health", tags=["Infra"])
 def health():
-    """Usado pelo load balancer / orquestrador para checar a instância."""
     return {"status": "ok"}

@@ -42,4 +42,4 @@ tests/test_api.py::test_ct30_listagem_da_fila_da_loja_e_paginada PASSED  [100%]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: C:\Users\prmagalhaes\Desktop\extracode\Projeto_faculdade\raizes-do-nordeste-api\docs\evidencias\relatorio-testes.xml -
-======================= 30 passed, 1 warning in 42.05s ========================
+======================= 30 passed, 1 warning in 19.40s ========================

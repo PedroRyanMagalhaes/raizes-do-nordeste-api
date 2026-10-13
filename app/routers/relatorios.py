@@ -1,9 +1,11 @@
 from datetime import date, datetime, time, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.database import get_db
 from app.models import ItemPedido, LogAuditoria, Pedido, Perfil, Produto, StatusPedido, Unidade
 from app.schemas import LinhaProduto, LinhaVendas, LogAuditoriaOut
@@ -11,16 +13,15 @@ from app.security import exigir_perfil
 
 router = APIRouter(tags=["Relatórios da Matriz"], dependencies=[Depends(exigir_perfil(Perfil.ADMIN))])
 
-# Pedido conta como venda a partir do pagamento confirmado.
 STATUS_VENDA = (StatusPedido.PAGO, StatusPedido.EM_PREPARO, StatusPedido.PRONTO, StatusPedido.ENTREGUE)
 
 
 def _periodo(inicio: date, fim: date):
-    """Intervalo semiaberto [inicio, fim+1): usa o índice em criado_em (sargable)."""
-    return (
-        Pedido.criado_em >= datetime.combine(inicio, time.min, timezone.utc),
-        Pedido.criado_em < datetime.combine(fim + timedelta(days=1), time.min, timezone.utc),
-    )
+    # datas do filtro são no fuso da empresa; criado_em é gravado em UTC
+    fuso = ZoneInfo(settings.fuso_horario)
+    de = datetime.combine(inicio, time.min, fuso).astimezone(timezone.utc)
+    ate = datetime.combine(fim + timedelta(days=1), time.min, fuso).astimezone(timezone.utc)
+    return Pedido.criado_em >= de, Pedido.criado_em < ate
 
 
 @router.get("/relatorios/vendas", response_model=list[LinhaVendas])

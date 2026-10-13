@@ -16,7 +16,6 @@ class Base(DeclarativeBase):
 
 
 def get_db() -> Generator[Session, None, None]:
-    """Dependência do FastAPI: uma sessão (unidade de trabalho) por requisição."""
     db = SessionLocal()
     try:
         yield db

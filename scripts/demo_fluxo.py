@@ -1,8 +1,3 @@
-"""Executa a jornada completa contra a API rodando (uvicorn) e imprime cada chamada.
-
-Uso: python scripts/demo_fluxo.py http://localhost:8000
-Pré-requisito: python -m app.seed
-"""
 import json
 import sys
 import uuid

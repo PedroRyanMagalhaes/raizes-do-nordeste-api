@@ -1,12 +1,3 @@
-"""Modelo de domínio / persistência (ORM SQLAlchemy 2.0).
-
-Decisões principais:
-- Dinheiro em Numeric(10,2) -> Decimal, nunca float (evita erro de arredondamento).
-- Cardápio é por unidade (ItemCardapio): o Produto é o "catálogo da franquia" e
-  cada unidade decide preço, disponibilidade e variação regional.
-- Pagamento guarda a chave de idempotência e a referência do gateway, com
-  restrição UNIQUE, para que reenvios e webhooks duplicados não gerem efeito duplo.
-"""
 import enum
 from datetime import date, datetime, timezone
 from decimal import Decimal
@@ -34,11 +25,11 @@ def agora() -> datetime:
 
 class Perfil(str, enum.Enum):
     CLIENTE = "CLIENTE"
-    TOTEM = "TOTEM"  # conta de serviço do totem de autoatendimento da loja
+    TOTEM = "TOTEM"
     ATENDENTE = "ATENDENTE"
     COZINHA = "COZINHA"
     GERENTE = "GERENTE"
-    ADMIN = "ADMIN"  # matriz / franqueadora
+    ADMIN = "ADMIN"
 
 
 class TipoCozinha(str, enum.Enum):
@@ -115,7 +106,7 @@ class Produto(Base):
     categoria: Mapped[str] = mapped_column(String(40))
     preco_base: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     requer_cozinha_completa: Mapped[bool] = mapped_column(Boolean, default=False)
-    # Janela sazonal (ex.: período junino). Nulo = disponível o ano todo.
+    # null = o ano todo
     disponivel_de: Mapped[date | None] = mapped_column(Date)
     disponivel_ate: Mapped[date | None] = mapped_column(Date)
 
@@ -159,7 +150,6 @@ class Pedido(Base):
     desconto: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=Decimal("0"))
     total: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     pontos_utilizados: Mapped[int] = mapped_column(Integer, default=0)
-    # Evita pedido duplicado quando o app reenvia a mesma requisição (rede instável).
     idempotency_key: Mapped[str | None] = mapped_column(String(80), unique=True)
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora, index=True)
     atualizado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora, onupdate=agora)
@@ -175,7 +165,7 @@ class ItemPedido(Base):
     pedido_id: Mapped[int] = mapped_column(ForeignKey("pedidos.id"), index=True)
     produto_id: Mapped[int] = mapped_column(ForeignKey("produtos.id"))
     quantidade: Mapped[int] = mapped_column(Integer)
-    # Preço "congelado" no momento da compra: mudança futura no cardápio não altera o histórico.
+    # preço no momento da compra
     preco_unitario: Mapped[Decimal] = mapped_column(Numeric(10, 2))
 
     pedido: Mapped[Pedido] = relationship(back_populates="itens")
@@ -199,8 +189,6 @@ class Pagamento(Base):
 
 
 class EventoGateway(Base):
-    """Registro de eventos de webhook já processados (deduplicação / idempotência)."""
-
     __tablename__ = "eventos_gateway"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -225,16 +213,15 @@ class TransacaoPontos(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     conta_id: Mapped[int] = mapped_column(ForeignKey("contas_fidelidade.id"), index=True)
     pedido_id: Mapped[int | None] = mapped_column(ForeignKey("pedidos.id"))
-    pontos: Mapped[int] = mapped_column(Integer)  # positivo = crédito, negativo = resgate
-    tipo: Mapped[str] = mapped_column(String(20))  # ACUMULO | RESGATE | ESTORNO
+    pontos: Mapped[int] = mapped_column(Integer)
+    tipo: Mapped[str] = mapped_column(String(20))  # ACUMULO, RESGATE, ESTORNO
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora)
 
     conta: Mapped[ContaFidelidade] = relationship(back_populates="transacoes")
 
 
 class Consentimento(Base):
-    """Histórico de consentimentos (LGPD art. 8º): nunca sobrescreve, sempre insere."""
-
+    # só insere, nunca atualiza
     __tablename__ = "consentimentos"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -248,8 +235,6 @@ class Consentimento(Base):
 
 
 class LogAuditoria(Base):
-    """Trilha de auditoria append-only para operações sensíveis."""
-
     __tablename__ = "logs_auditoria"
 
     id: Mapped[int] = mapped_column(primary_key=True)

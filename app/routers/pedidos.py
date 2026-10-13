@@ -11,7 +11,7 @@ from app.services import pedidos as servico
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
 FUNCIONARIOS = (Perfil.ATENDENTE, Perfil.COZINHA, Perfil.GERENTE, Perfil.ADMIN)
-# Status que a operação da loja pode definir manualmente (PAGO vem só do webhook).
+# PAGO só via webhook
 STATUS_OPERACIONAIS = {StatusPedido.EM_PREPARO, StatusPedido.PRONTO, StatusPedido.ENTREGUE}
 
 
@@ -38,7 +38,6 @@ def listar_pedidos(
     db: Session = Depends(get_db),
     usuario: Usuario = Depends(exigir_perfil(*FUNCIONARIOS)),
 ):
-    """Fila da loja (paginada). Índices em unidade_id/status/criado_em sustentam a consulta."""
     garantir_acesso_unidade(usuario, unidade_id)
     filtro = [Pedido.unidade_id == unidade_id]
     if status_pedido:
@@ -53,7 +52,6 @@ def listar_pedidos(
 
 @router.get("/{pedido_id}", response_model=PedidoOut)
 def obter_pedido(pedido_id: int, db: Session = Depends(get_db), usuario: Usuario = Depends(usuario_atual)):
-    """Acompanhamento de status (cliente vê só os próprios pedidos)."""
     return servico.obter_pedido(db, pedido_id, usuario)
 
 

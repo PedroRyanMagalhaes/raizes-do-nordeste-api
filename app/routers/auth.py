@@ -12,7 +12,6 @@ router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
 @router.post("/registrar", response_model=UsuarioOut, status_code=status.HTTP_201_CREATED)
 def registrar(dados: RegistroIn, db: Session = Depends(get_db)):
-    """Cadastro público cria SEMPRE perfil CLIENTE (evita escalonamento de privilégio)."""
     if db.scalar(select(Usuario).where(Usuario.email == dados.email.lower())):
         raise HTTPException(status.HTTP_409_CONFLICT, "E-mail já cadastrado")
     usuario = Usuario(
@@ -33,7 +32,6 @@ def registrar(dados: RegistroIn, db: Session = Depends(get_db)):
 @router.post("/login", response_model=TokenOut)
 def login(dados: LoginIn, db: Session = Depends(get_db)):
     usuario = db.scalar(select(Usuario).where(Usuario.email == dados.email.lower()))
-    # Mesma mensagem para e-mail inexistente e senha errada (evita enumeração de usuários).
     if usuario is None or usuario.anonimizado or not verificar_senha(dados.senha, usuario.senha_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Credenciais inválidas")
     return TokenOut(access_token=criar_token(usuario))

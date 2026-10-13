@@ -1,4 +1,3 @@
-"""Dados de demonstração. Uso: python -m app.seed"""
 from datetime import date
 from decimal import Decimal
 
@@ -29,7 +28,7 @@ def popular(db: Session, ano: int | None = None) -> dict[str, object]:
     cardapio = [
         (recife, tapioca, "18.00", None), (recife, cuscuz, "22.00", "Com queijo coalho"),
         (recife, bolo, "9.50", None), (recife, suco, "8.00", None), (recife, canjica, "10.00", None),
-        (sp, tapioca, "21.00", None), (sp, cuscuz, "25.00", None),  # cuscuz não aparece em SP: cozinha reduzida
+        (sp, tapioca, "21.00", None), (sp, cuscuz, "25.00", None),
         (sp, bolo, "11.00", None), (sp, suco, "9.50", "Polpa congelada"),
     ]
     for unidade, produto, preco, variacao in cardapio:

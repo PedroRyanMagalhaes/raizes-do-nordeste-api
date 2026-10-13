@@ -18,7 +18,6 @@ router = APIRouter(prefix="/pagamentos", tags=["Pagamentos"])
 def solicitar_pagamento(
     pedido_id: int, dados: PagamentoIn, db: Session = Depends(get_db), usuario: Usuario = Depends(usuario_atual)
 ):
-    """Solicita a cobrança ao gateway externo. 202: o resultado chega depois via webhook."""
     pedido = obter_pedido(db, pedido_id, usuario)
     return servico.iniciar_pagamento(db, pedido, dados.metodo)
 
@@ -29,7 +28,6 @@ async def webhook_gateway(
     x_signature: str | None = Header(default=None),
     db: Session = Depends(get_db),
 ):
-    """Callback do gateway. Autenticado por assinatura HMAC-SHA256 do corpo bruto."""
     corpo = await request.body()
     if not servico.assinatura_valida(corpo, x_signature):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Assinatura inválida")

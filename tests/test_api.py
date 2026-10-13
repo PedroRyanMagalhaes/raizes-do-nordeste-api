@@ -1,4 +1,3 @@
-"""Testes de integração da API. Cada teste referencia um caso (CT-xx) do Plano de Testes."""
 from datetime import date
 
 from app.models import Estoque, Pedido, StatusPedido
@@ -20,7 +19,6 @@ def pagar_e_aprovar(client, headers, pedido_id, evento="evt-ok"):
     return r.json()
 
 
-# ---------------- Autenticação e autorização ----------------
 def test_ct01_registro_e_login_cliente(ctx):
     c = ctx["client"]
     h = registrar_cliente(c)
@@ -50,12 +48,11 @@ def test_ct05_cliente_nao_acessa_relatorio_da_matriz(ctx):
     assert r.status_code == 403
 
 
-# ---------------- Cardápio por unidade ----------------
 def test_ct06_cardapio_respeita_tipo_de_cozinha(ctx):
     c, d = ctx["client"], ctx["dados"]
     nomes_sp = {i["nome"] for i in c.get(f"/unidades/{d['sp'].id}/cardapio").json()}
     nomes_recife = {i["nome"] for i in c.get(f"/unidades/{d['recife'].id}/cardapio").json()}
-    assert "Cuscuz recheado" not in nomes_sp  # SP tem cozinha reduzida
+    assert "Cuscuz recheado" not in nomes_sp
     assert "Cuscuz recheado" in nomes_recife
 
 
@@ -76,7 +73,6 @@ def test_ct08_preco_varia_por_unidade(ctx):
     assert preco(d["sp"].id) == "21.00"
 
 
-# ---------------- Pedidos multicanal ----------------
 def test_ct09_cliente_cria_pedido_pelo_app_e_estoque_e_baixado(ctx):
     c, d = ctx["client"], ctx["dados"]
     h = registrar_cliente(c)
@@ -85,7 +81,7 @@ def test_ct09_cliente_cria_pedido_pelo_app_e_estoque_e_baixado(ctx):
     assert r.status_code == 201, r.text
     corpo = r.json()
     assert corpo["status"] == "AGUARDANDO_PAGAMENTO"
-    assert corpo["total"] == "44.00"  # 2 x 18,00 + 8,00
+    assert corpo["total"] == "44.00"
     with ctx["Sessao"]() as db:
         est = db.query(Estoque).filter_by(unidade_id=d["recife"].id, produto_id=d["tapioca"].id).one()
         assert est.quantidade == 48
@@ -111,7 +107,7 @@ def test_ct11_estoque_insuficiente_retorna_409_e_nao_baixa_nada(ctx):
     r = criar_pedido(c, h, d["recife"].id, [{"produto_id": d["suco"].id, "quantidade": 1},
                                             {"produto_id": d["bolo"].id, "quantidade": 5}])
     assert r.status_code == 409
-    with ctx["Sessao"]() as db:  # rollback: o suco não pode ter sido baixado
+    with ctx["Sessao"]() as db:
         est = db.query(Estoque).filter_by(unidade_id=d["recife"].id, produto_id=d["suco"].id).one()
         assert est.quantidade == 50
 
@@ -147,7 +143,6 @@ def test_ct15_cliente_nao_ve_pedido_de_outro_cliente(ctx):
     assert c.get(f"/pedidos/{pid}", headers=h2).status_code == 404
 
 
-# ---------------- Pagamento externo ----------------
 def test_ct16_fluxo_completo_pagamento_aprovado_ate_entrega(ctx):
     c, d = ctx["client"], ctx["dados"]
     h = registrar_cliente(c)
@@ -183,7 +178,7 @@ def test_ct18_gateway_fora_do_ar_retorna_503_e_retentativa_funciona(ctx):
     gw.falhar = False
     r = c.post(f"/pagamentos/pedidos/{pid}", json={"metodo": "PIX"}, headers=h)
     assert r.status_code == 202 and r.json()["gateway_ref"]
-    assert len(gw.cobrancas) == 1  # mesma chave de idempotência: uma única cobrança
+    assert len(gw.cobrancas) == 1
 
 
 def test_ct19_webhook_com_assinatura_invalida_retorna_401(ctx):
@@ -209,7 +204,6 @@ def test_ct21_cozinha_nao_pode_pular_etapas(ctx):
     assert c.patch(f"/pedidos/{pid}/status", json={"status": "PAGO"}, headers=hc).status_code == 422
 
 
-# ---------------- Cancelamento, desconto e auditoria ----------------
 def test_ct22_cancelamento_de_pedido_pago_exige_gerente_e_gera_auditoria_e_estorno(ctx):
     c, d, gw = ctx["client"], ctx["dados"], ctx["gateway"]
     h = registrar_cliente(c)
@@ -222,7 +216,7 @@ def test_ct22_cancelamento_de_pedido_pago_exige_gerente_e_gera_auditoria_e_estor
     assert len(gw.estornos) == 1
     logs = c.get("/auditoria", params={"acao": "PEDIDO_CANCELADO"}, headers=token(c, "admin@raizes.com")).json()
     assert logs and '"Cliente desistiu na fila"' in logs[0]["detalhes"]
-    with ctx["Sessao"]() as db:  # estoque devolvido
+    with ctx["Sessao"]() as db:
         assert db.query(Estoque).filter_by(unidade_id=d["recife"].id, produto_id=d["bolo"].id).one().quantidade == 50
 
 
@@ -244,7 +238,6 @@ def test_ct24_gerente_nao_ajusta_estoque_de_outra_unidade(ctx):
     assert c.put(f"/unidades/{d['sp'].id}/estoque/{d['bolo'].id}", json={"quantidade": 5}, headers=h).status_code == 200
 
 
-# ---------------- Fidelidade e LGPD ----------------
 def test_ct25_sem_consentimento_nao_acumula_pontos(ctx):
     c, d = ctx["client"], ctx["dados"]
     h = registrar_cliente(c, aceita_fidelidade=False)
@@ -257,12 +250,12 @@ def test_ct25_sem_consentimento_nao_acumula_pontos(ctx):
 def test_ct26_resgate_de_pontos_limitado_a_50_porcento(ctx):
     c, d = ctx["client"], ctx["dados"]
     h = registrar_cliente(c)
-    for i in range(10):  # acumula 10 x 22 = 220 pontos
+    for i in range(10):
         pid = criar_pedido(c, h, d["recife"].id, [{"produto_id": d["cuscuz"].id, "quantidade": 1}]).json()["id"]
         pagar_e_aprovar(c, h, pid, evento=f"evt-{i}")
     r = criar_pedido(c, h, d["recife"].id, [{"produto_id": d["suco"].id, "quantidade": 1}], usar_pontos=220)
     corpo = r.json()
-    assert corpo["desconto"] == "4.00" and corpo["total"] == "4.00"  # teto 50% de 8,00
+    assert corpo["desconto"] == "4.00" and corpo["total"] == "4.00"
     assert corpo["pontos_utilizados"] == 80
     assert c.get("/fidelidade/saldo", headers=h).json()["saldo_pontos"] == 140
 
@@ -283,11 +276,10 @@ def test_ct28_anonimizacao_remove_dados_pessoais_e_bloqueia_login(ctx):
     assert c.get("/lgpd/meus-dados", headers=h).json()["usuario"]["email"] == "titular@email.com"
     assert c.delete("/lgpd/minha-conta", headers=h).status_code == 204
     assert c.post("/auth/login", json={"email": "titular@email.com", "senha": "Cliente@123"}).status_code == 401
-    with ctx["Sessao"]() as db:  # pedido preservado para relatórios, sem dado pessoal
+    with ctx["Sessao"]() as db:
         assert db.query(Pedido).count() == 1
 
 
-# ---------------- Relatórios da matriz ----------------
 def test_ct29_relatorio_vendas_por_regiao_e_mais_vendidos(ctx):
     c, d = ctx["client"], ctx["dados"]
     h = registrar_cliente(c)
@@ -295,7 +287,7 @@ def test_ct29_relatorio_vendas_por_regiao_e_mais_vendidos(ctx):
     pagar_e_aprovar(c, h, p1, "e1")
     p2 = criar_pedido(c, h, d["sp"].id, [{"produto_id": d["bolo"].id, "quantidade": 1}]).json()["id"]
     pagar_e_aprovar(c, h, p2, "e2")
-    criar_pedido(c, h, d["sp"].id, [{"produto_id": d["bolo"].id, "quantidade": 5}])  # não pago: não entra
+    criar_pedido(c, h, d["sp"].id, [{"produto_id": d["bolo"].id, "quantidade": 5}])
     ha = token(c, "admin@raizes.com")
     hoje = date.today().isoformat()
     vendas = c.get("/relatorios/vendas", params={"inicio": hoje, "fim": hoje, "agrupar_por": "regiao"}, headers=ha).json()

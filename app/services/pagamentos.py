@@ -1,15 +1,3 @@
-"""Integração com o gateway de pagamento externo (padrão Adapter + Webhook).
-
-O sistema NÃO processa cartão/PIX: apenas solicita a cobrança, recebe o
-resultado assíncrono via webhook assinado (HMAC) e atualiza o pedido.
-
-Tratamento de falhas:
-- Timeout/erro do gateway -> pagamento fica PENDENTE e a API responde 503;
-  o cliente pode repetir com a MESMA chave de idempotência sem cobrança dupla.
-- Webhook duplicado (o gateway reenvia em caso de dúvida) -> ignorado pela
-  tabela eventos_gateway (UNIQUE em evento_id).
-- Webhook com assinatura inválida -> 401 (proteção contra falsificação).
-"""
 import hashlib
 import hmac
 import uuid
@@ -32,15 +20,12 @@ class GatewayIndisponivel(Exception):
 
 class GatewayPagamento(Protocol):
     def solicitar_cobranca(self, valor: str, metodo: str, idempotency_key: str) -> str:
-        """Retorna a referência da transação no gateway."""
+        ...
 
     def solicitar_estorno(self, gateway_ref: str) -> None: ...
 
 
 class GatewayFake:
-    """Implementação local para desenvolvimento/testes. Em produção seria
-    substituída por um adapter do provedor real (Stripe, Pagar.me, Mercado Pago...)."""
-
     def __init__(self) -> None:
         self.falhar = False
         self.cobrancas: dict[str, str] = {}  # idempotency_key -> gateway_ref
@@ -49,7 +34,6 @@ class GatewayFake:
     def solicitar_cobranca(self, valor: str, metodo: str, idempotency_key: str) -> str:
         if self.falhar:
             raise GatewayIndisponivel("timeout")
-        # O próprio gateway também é idempotente pela chave.
         return self.cobrancas.setdefault(idempotency_key, f"gw_{uuid.uuid4().hex[:16]}")
 
     def solicitar_estorno(self, gateway_ref: str) -> None:
@@ -71,11 +55,11 @@ def assinatura_valida(corpo: bytes, assinatura: str | None) -> bool:
 
 def iniciar_pagamento(db: Session, pedido: Pedido, metodo: str) -> Pagamento:
     if pedido.status == StatusPedido.PAGAMENTO_RECUSADO:
-        transicionar(db, pedido, StatusPedido.AGUARDANDO_PAGAMENTO)  # nova tentativa
+        transicionar(db, pedido, StatusPedido.AGUARDANDO_PAGAMENTO)
     elif pedido.status != StatusPedido.AGUARDANDO_PAGAMENTO:
         raise HTTPException(status.HTTP_409_CONFLICT, f"Pedido em status {pedido.status.value} não aceita pagamento")
 
-    # Uma chave por tentativa: reaproveita a tentativa PENDENTE se existir.
+    # reaproveita tentativa pendente
     pagamento = db.scalar(
         select(Pagamento).where(Pagamento.pedido_id == pedido.id, Pagamento.status == StatusPagamento.PENDENTE)
     )
@@ -92,12 +76,12 @@ def iniciar_pagamento(db: Session, pedido: Pedido, metodo: str) -> Pagamento:
         db.flush()
     if pagamento.gateway_ref:
         db.commit()
-        return pagamento  # já enviado ao gateway: resposta idempotente
+        return pagamento
 
     try:
         pagamento.gateway_ref = gateway.solicitar_cobranca(str(pagamento.valor), metodo, pagamento.idempotency_key)
     except GatewayIndisponivel:
-        db.commit()  # mantém o registro PENDENTE para reprocessar depois
+        db.commit()
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
             "Gateway de pagamento indisponível. Tente novamente em instantes.",
@@ -148,5 +132,5 @@ def solicitar_estorno(db: Session, pedido: Pedido) -> None:
     try:
         gateway.solicitar_estorno(pagamento.gateway_ref)
     except GatewayIndisponivel:
-        # Status fica registrado; um job de reconciliação reenvia os estornos pendentes.
+        # TODO: job de reconciliação
         auditoria.registrar(db, "ESTORNO_PENDENTE_REENVIO", "Pagamento", pagamento.id, None)

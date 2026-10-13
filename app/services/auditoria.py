@@ -13,8 +13,7 @@ def registrar(
     usuario_id: int | None,
     **detalhes,
 ) -> None:
-    """Adiciona um registro de auditoria na MESMA transação da operação auditada:
-    se a operação falhar e der rollback, o log também não é gravado (consistência)."""
+    # sem commit aqui: entra na transação de quem chamou
     db.add(
         LogAuditoria(
             usuario_id=usuario_id,

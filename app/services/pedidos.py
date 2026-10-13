@@ -1,8 +1,3 @@
-"""Regras de negócio de cardápio, estoque e pedidos (camada de serviço).
-
-Os routers só tratam HTTP; toda regra fica aqui, o que facilita testar e
-reaproveitar a lógica em outros canais (ex.: fila, job).
-"""
 from datetime import date
 from decimal import Decimal
 
@@ -28,7 +23,6 @@ from app.schemas import ItemCardapioOut, PedidoIn
 from app.security import garantir_acesso_unidade
 from app.services import auditoria, fidelidade
 
-# Máquina de estados do pedido: só as transições abaixo são válidas.
 TRANSICOES: dict[StatusPedido, set[StatusPedido]] = {
     StatusPedido.AGUARDANDO_PAGAMENTO: {StatusPedido.PAGO, StatusPedido.PAGAMENTO_RECUSADO, StatusPedido.CANCELADO},
     StatusPedido.PAGAMENTO_RECUSADO: {StatusPedido.AGUARDANDO_PAGAMENTO, StatusPedido.CANCELADO},
@@ -39,7 +33,6 @@ TRANSICOES: dict[StatusPedido, set[StatusPedido]] = {
     StatusPedido.CANCELADO: set(),
 }
 
-# Quais perfis podem abrir pedido em cada canal.
 PERFIS_POR_CANAL: dict[Canal, set[Perfil]] = {
     Canal.APP: {Perfil.CLIENTE},
     Canal.PICKUP: {Perfil.CLIENTE},
@@ -92,8 +85,7 @@ def listar_cardapio(db: Session, unidade_id: int, hoje: date | None = None) -> l
 
 
 def _baixar_estoque(db: Session, unidade_id: int, produto_id: int, quantidade: int) -> bool:
-    """UPDATE condicional e atômico: evita vender o mesmo item duas vezes em
-    acessos concorrentes (horário de pico) sem precisar de lock explícito."""
+    # update condicional: sem saldo, rowcount = 0
     resultado = db.execute(
         update(Estoque)
         .where(
@@ -116,7 +108,6 @@ def _devolver_estoque(db: Session, pedido: Pedido) -> None:
 
 
 def criar_pedido(db: Session, dados: PedidoIn, usuario: Usuario, idempotency_key: str | None) -> tuple[Pedido, bool]:
-    """Retorna (pedido, criado_agora). Se a chave de idempotência já existe, devolve o pedido original."""
     if idempotency_key:
         existente = db.scalar(select(Pedido).where(Pedido.idempotency_key == idempotency_key))
         if existente:
@@ -130,7 +121,6 @@ def criar_pedido(db: Session, dados: PedidoIn, usuario: Usuario, idempotency_key
     unidade = obter_unidade_ativa(db, dados.unidade_id)
     hoje = date.today()
 
-    # Agrupa itens repetidos (ex.: 2 linhas do mesmo produto) antes de validar.
     quantidades: dict[int, int] = {}
     for item in dados.itens:
         quantidades[item.produto_id] = quantidades.get(item.produto_id, 0) + item.quantidade
@@ -165,7 +155,7 @@ def criar_pedido(db: Session, dados: PedidoIn, usuario: Usuario, idempotency_key
             db.rollback()
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"Produto {produto_id} indisponível nesta unidade")
         if not _baixar_estoque(db, unidade.id, produto_id, qtd):
-            db.rollback()  # desfaz baixas já feitas para os itens anteriores
+            db.rollback()
             raise HTTPException(status.HTTP_409_CONFLICT, f"Estoque insuficiente para o produto {produto_id}")
         pedido.itens.append(ItemPedido(produto_id=produto_id, quantidade=qtd, preco_unitario=item_cardapio.preco))
         subtotal += item_cardapio.preco * qtd
@@ -200,7 +190,7 @@ def obter_pedido(db: Session, pedido_id: int, usuario: Usuario) -> Pedido:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Pedido não encontrado")
     if usuario.perfil == Perfil.CLIENTE:
         if pedido.cliente_id != usuario.id:
-            # 404 em vez de 403: não revela a existência de pedidos de terceiros (IDOR).
+            # 404 para não expor pedido de outro cliente
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Pedido não encontrado")
     else:
         garantir_acesso_unidade(usuario, pedido.unidade_id)

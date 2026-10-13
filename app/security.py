@@ -1,9 +1,3 @@
-"""Autenticação (JWT) e autorização por perfil (RBAC).
-
-- Senhas: PBKDF2-HMAC-SHA256 com salt aleatório e 390 mil iterações
-  (recomendação OWASP), usando apenas a biblioteca padrão.
-- Comparações com hmac.compare_digest para evitar timing attacks.
-"""
 import base64
 import hashlib
 import hmac
@@ -66,8 +60,6 @@ def usuario_atual(
 
 
 def exigir_perfil(*perfis: Perfil):
-    """Fábrica de dependência: `Depends(exigir_perfil(Perfil.GERENTE, Perfil.ADMIN))`."""
-
     def _verificar(usuario: Usuario = Depends(usuario_atual)) -> Usuario:
         if usuario.perfil not in perfis:
             raise HTTPException(status.HTTP_403_FORBIDDEN, "Perfil sem permissão para esta operação")
@@ -77,7 +69,6 @@ def exigir_perfil(*perfis: Perfil):
 
 
 def garantir_acesso_unidade(usuario: Usuario, unidade_id: int) -> None:
-    """Funcionário só opera a própria unidade; ADMIN (matriz) opera todas."""
     if usuario.perfil == Perfil.ADMIN:
         return
     if usuario.perfil != Perfil.CLIENTE and usuario.unidade_id != unidade_id:

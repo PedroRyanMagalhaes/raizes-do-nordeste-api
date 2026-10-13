@@ -1,5 +1,3 @@
-"""DTOs de entrada/saída (Pydantic). Separados dos modelos ORM para não vazar
-campos internos (ex.: senha_hash) e para validar a entrada na borda da API."""
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -12,7 +10,6 @@ class ORM(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Auth ----------
 class RegistroIn(BaseModel):
     nome: str = Field(min_length=2, max_length=120)
     email: EmailStr
@@ -39,7 +36,6 @@ class UsuarioOut(ORM):
     unidade_id: int | None
 
 
-# ---------- Unidades / cardápio / estoque ----------
 class UnidadeOut(ORM):
     id: int
     nome: str
@@ -69,7 +65,6 @@ class EstoqueOut(ORM):
     quantidade: int
 
 
-# ---------- Pedidos ----------
 class ItemPedidoIn(BaseModel):
     produto_id: int
     quantidade: int = Field(gt=0, le=50)
@@ -122,7 +117,6 @@ class PaginaPedidos(BaseModel):
     itens: list[PedidoOut]
 
 
-# ---------- Pagamentos ----------
 class PagamentoIn(BaseModel):
     metodo: str = Field(pattern="^(PIX|CREDITO|DEBITO)$")
 
@@ -142,7 +136,6 @@ class WebhookIn(BaseModel):
     resultado: str = Field(pattern="^(APROVADO|RECUSADO)$")
 
 
-# ---------- Fidelidade / LGPD ----------
 class ConsentimentoIn(BaseModel):
     finalidade: Finalidade
     concedido: bool
@@ -161,7 +154,6 @@ class SaldoOut(BaseModel):
     consentimento_fidelidade: bool
 
 
-# ---------- Relatórios / Auditoria ----------
 class LinhaVendas(BaseModel):
     chave: str
     quantidade_pedidos: int

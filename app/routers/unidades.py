@@ -22,8 +22,6 @@ def listar_unidades(regiao: str | None = None, db: Session = Depends(get_db)):
 
 @router.get("/{unidade_id}/cardapio", response_model=list[ItemCardapioOut])
 def cardapio(unidade_id: int, db: Session = Depends(get_db)):
-    """Cardápio público da unidade: só itens ativos, com estoque, compatíveis com o
-    tipo de cozinha e dentro da janela sazonal."""
     return listar_cardapio(db, unidade_id)
 
 

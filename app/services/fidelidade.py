@@ -8,7 +8,6 @@ from app.models import Consentimento, ContaFidelidade, Finalidade, Pedido, Trans
 
 
 def tem_consentimento(db: Session, usuario_id: int, finalidade: Finalidade) -> bool:
-    """Vale o registro mais recente: o consentimento pode ser revogado a qualquer momento."""
     ultimo = db.scalar(
         select(Consentimento)
         .where(Consentimento.usuario_id == usuario_id, Consentimento.finalidade == finalidade)
@@ -28,7 +27,6 @@ def obter_conta(db: Session, usuario_id: int) -> ContaFidelidade:
 
 
 def calcular_desconto_por_pontos(pontos: int, subtotal: Decimal) -> tuple[int, Decimal]:
-    """Converte pontos em desconto respeitando o teto percentual. Retorna (pontos_usados, desconto)."""
     teto = (subtotal * Decimal(str(settings.desconto_maximo_percentual))).quantize(Decimal("0.01"), ROUND_DOWN)
     desconto = (Decimal(pontos) / settings.pontos_por_real_desconto).quantize(Decimal("0.01"), ROUND_DOWN)
     if desconto > teto:
@@ -38,7 +36,6 @@ def calcular_desconto_por_pontos(pontos: int, subtotal: Decimal) -> tuple[int, D
 
 
 def creditar_pontos_do_pedido(db: Session, pedido: Pedido) -> None:
-    """Acúmulo só ocorre com consentimento ativo para FIDELIDADE (LGPD)."""
     if pedido.cliente_id is None or not tem_consentimento(db, pedido.cliente_id, Finalidade.FIDELIDADE):
         return
     pontos = int(pedido.total) * settings.pontos_por_real

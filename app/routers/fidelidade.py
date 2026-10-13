@@ -24,7 +24,6 @@ def saldo(db: Session = Depends(get_db), usuario: Usuario = Depends(cliente)):
 
 @router.post("/lgpd/consentimentos", response_model=ConsentimentoOut, status_code=status.HTTP_201_CREATED)
 def registrar_consentimento(dados: ConsentimentoIn, db: Session = Depends(get_db), usuario: Usuario = Depends(cliente)):
-    """Concede ou revoga (concedido=false). Sempre insere um novo registro: histórico comprova o consentimento."""
     registro = Consentimento(usuario_id=usuario.id, **dados.model_dump())
     db.add(registro)
     db.commit()
@@ -33,7 +32,7 @@ def registrar_consentimento(dados: ConsentimentoIn, db: Session = Depends(get_db
 
 @router.get("/lgpd/meus-dados")
 def meus_dados(db: Session = Depends(get_db), usuario: Usuario = Depends(cliente)):
-    """Direito de acesso/portabilidade (LGPD art. 18, II e V)."""
+    # LGPD art. 18, II e V
     pedidos = db.scalars(select(Pedido).where(Pedido.cliente_id == usuario.id)).all()
     auditoria.registrar(db, "LGPD_EXPORTACAO_DADOS", "Usuario", usuario.id, usuario.id)
     db.commit()
@@ -47,8 +46,7 @@ def meus_dados(db: Session = Depends(get_db), usuario: Usuario = Depends(cliente
 
 @router.delete("/lgpd/minha-conta", status_code=status.HTTP_204_NO_CONTENT)
 def anonimizar_conta(db: Session = Depends(get_db), usuario: Usuario = Depends(cliente)):
-    """Direito de eliminação (art. 18, VI). Anonimiza em vez de apagar: os pedidos
-    continuam válidos para relatórios fiscais/financeiros, mas sem vínculo identificável."""
+    # anonimiza em vez de apagar: pedidos precisam ser mantidos (fiscal)
     usuario.nome = "Titular anonimizado"
     usuario.email = f"anonimizado-{usuario.id}@invalido.local"
     usuario.data_nascimento = None

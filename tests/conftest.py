@@ -14,7 +14,6 @@ from app.services import pagamentos
 
 @pytest.fixture()
 def ctx():
-    """Banco SQLite em memória isolado por teste + dados de demonstração."""
     engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(engine)
     Sessao = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
